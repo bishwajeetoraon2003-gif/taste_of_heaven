@@ -732,6 +732,7 @@ body.hover-target .custom-cursor-ring {
 .hero-title span {
   background: linear-gradient(135deg, var(--accent-gold-light) 0%, var(--accent-gold-bright) 50%, var(--accent-gold-dark) 100%);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
