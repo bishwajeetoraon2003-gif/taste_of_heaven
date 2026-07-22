@@ -439,9 +439,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const isVegOnly = filterVeg ? filterVeg.checked : false;
     const isPopularOnly = filterPopular ? filterPopular.checked : false;
 
-    let dataSource = MENU_DATA;
+    // Load custom menu if modified by Admin CMS
+    const customMenu = JSON.parse(localStorage.getItem('taste_custom_menu'));
+    let dataSource = customMenu || MENU_DATA;
 
-    if (window.TasteAPI) {
+    if (!customMenu && window.TasteAPI) {
       const apiMenu = await window.TasteAPI.getMenu(activeCategory, searchVal);
       if (apiMenu && apiMenu.length > 0) {
         dataSource = apiMenu.map(m => ({
@@ -979,6 +981,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const statsSection = document.querySelector('.stats-grid');
   if (statsSection) statsObserver.observe(statsSection);
+
+  // Apply custom site settings (Google Map, Address, Phone, Hours)
+  const siteSettings = JSON.parse(localStorage.getItem('taste_site_settings'));
+  if (siteSettings) {
+    if (siteSettings.mapUrl) {
+      const iframe = document.getElementById('map-iframe');
+      if (iframe) iframe.src = siteSettings.mapUrl;
+    }
+    if (siteSettings.address) {
+      const addrEl = document.getElementById('contact-address-text');
+      if (addrEl) addrEl.textContent = siteSettings.address;
+    }
+    if (siteSettings.phone) {
+      const phoneEl = document.getElementById('contact-phone-text');
+      if (phoneEl) phoneEl.textContent = siteSettings.phone;
+    }
+    if (siteSettings.hours) {
+      const hoursEl = document.getElementById('contact-hours-text');
+      if (hoursEl) hoursEl.innerHTML = siteSettings.hours.replace(/\n/g, '<br>');
+    }
+  }
 
   /* --------------------------------------------------------------------------
      17. BACK TO TOP & SCROLL PROGRESS RING

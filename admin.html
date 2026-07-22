@@ -332,7 +332,8 @@
     <div class="admin-tab-nav">
       <button class="admin-tab-btn active" data-tab="tab-reservations"><i class="fa-solid fa-calendar-days"></i> Table Reservations</button>
       <button class="admin-tab-btn" data-tab="tab-orders"><i class="fa-solid fa-receipt"></i> Online Orders</button>
-      <button class="admin-tab-btn" data-tab="tab-menu"><i class="fa-solid fa-book-open"></i> Menu Items</button>
+      <button class="admin-tab-btn" data-tab="tab-menu"><i class="fa-solid fa-utensils"></i> Menu Items CMS</button>
+      <button class="admin-tab-btn" data-tab="tab-settings"><i class="fa-solid fa-map-location-dot"></i> Map & Location Settings</button>
     </div>
 
     <!-- Tab 1: Reservations Table -->
@@ -352,24 +353,7 @@
             </tr>
           </thead>
           <tbody id="reservations-tbody">
-            <tr>
-              <td class="text-gold" style="font-weight: 600;">#TH-45992</td>
-              <td>Lord Sterling</td>
-              <td>sterling@luxury.com<br><small style="color: var(--text-muted);">+1 555 999 8888</small></td>
-              <td>2 Guests</td>
-              <td>2026-08-15 at 19:00</td>
-              <td>Metropolis Skyline View</td>
-              <td><span class="status-badge confirmed">Confirmed</span></td>
-            </tr>
-            <tr>
-              <td class="text-gold" style="font-weight: 600;">#TH-78102</td>
-              <td>Lady Victoria Sterling</td>
-              <td>victoria@luxury.com<br><small style="color: var(--text-muted);">+1 555 111 2222</small></td>
-              <td>4 Guests</td>
-              <td>2026-08-20 at 20:30</td>
-              <td>Royal VIP Lounge</td>
-              <td><span class="status-badge confirmed">Confirmed</span></td>
-            </tr>
+            <!-- Rendered dynamically -->
           </tbody>
         </table>
       </div>
@@ -391,94 +375,146 @@
             </tr>
           </thead>
           <tbody id="orders-tbody">
-            <tr>
-              <td class="text-gold" style="font-weight: 600;">#ORD-35160</td>
-              <td>Lady Victoria<br><small style="color: var(--text-muted);">victoria@luxury.com</small></td>
-              <td>1x A5 Miyazaki Wagyu Tenderloin</td>
-              <td>$203.50</td>
-              <td><span class="status-badge confirmed">Preparing</span></td>
-            </tr>
-            <tr>
-              <td class="text-gold" style="font-weight: 600;">#ORD-99142</td>
-              <td>Sir Arthur Pendelton<br><small style="color: var(--text-muted);">arthur@luxury.com</small></td>
-              <td>2x Gold Leaf Chocolate Sphere, 1x Celestial Smoked Old Fashioned</td>
-              <td>$134.20</td>
-              <td><span class="status-badge pending">Received</span></td>
-            </tr>
+            <!-- Rendered dynamically -->
           </tbody>
         </table>
       </div>
     </div>
 
-    <!-- Tab 3: Menu Catalog -->
+    <!-- Tab 3: Menu Catalog CMS -->
     <div id="tab-menu" class="tab-pane" style="display: none;">
       <div class="glass-card" style="padding: 1.5rem; overflow-x: auto;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-          <h3 style="font-family: var(--font-heading); color: var(--text-primary);">Menu Catalog</h3>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 1rem;">
+          <div>
+            <h3 style="font-family: var(--font-heading); color: var(--text-primary); margin: 0;">Food Menu CMS</h3>
+            <p style="font-size: 0.8rem; color: var(--text-secondary); margin: 0.25rem 0 0 0;">Add, Edit, or Delete dishes directly on the website menu.</p>
+          </div>
+          <button class="btn btn-gold" id="btn-add-food" style="padding: 0.6rem 1.2rem; font-size: 0.85rem;">
+            <i class="fa-solid fa-plus"></i> Add New Dish
+          </button>
         </div>
         <table class="admin-table">
           <thead>
             <tr>
               <th>ID</th>
-              <th>Item Name</th>
+              <th>Preview</th>
+              <th>Dish Name</th>
               <th>Category</th>
-              <th>Price</th>
-              <th>Rating</th>
+              <th>Price ($)</th>
               <th>Dietary</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody id="menu-tbody">
-            <tr>
-              <td>1</td>
-              <td>A5 Miyazaki Wagyu Tenderloin</td>
-              <td><span class="badge badge-gold">specials</span></td>
-              <td>$185.00</td>
-              <td>★ 4.9</td>
-              <td>NON-VEG</td>
-            </tr>
-            <tr>
-              <td>2</td>
-              <td>Butter-Poached Maine Lobster</td>
-              <td><span class="badge badge-gold">mains</span></td>
-              <td>$145.00</td>
-              <td>★ 4.8</td>
-              <td>NON-VEG</td>
-            </tr>
-            <tr>
-              <td>3</td>
-              <td>Wild Organic Truffle Carpaccio</td>
-              <td><span class="badge badge-gold">starters</span></td>
-              <td>$68.00</td>
-              <td>★ 4.9</td>
-              <td>VEG</td>
-            </tr>
-            <tr>
-              <td>4</td>
-              <td>Pan-Seared Chilean Sea Bass</td>
-              <td><span class="badge badge-gold">mains</span></td>
-              <td>$120.00</td>
-              <td>★ 4.7</td>
-              <td>NON-VEG</td>
-            </tr>
-            <tr>
-              <td>5</td>
-              <td>Gold Leaf Chocolate Sphere</td>
-              <td><span class="badge badge-gold">desserts</span></td>
-              <td>$45.00</td>
-              <td>★ 5.0</td>
-              <td>VEG</td>
-            </tr>
-            <tr>
-              <td>6</td>
-              <td>Celestial Smoked Old Fashioned</td>
-              <td><span class="badge badge-gold">cocktails</span></td>
-              <td>$32.00</td>
-              <td>★ 4.9</td>
-              <td>VEG</td>
-            </tr>
+            <!-- Rendered dynamically -->
           </tbody>
         </table>
       </div>
+    </div>
+
+    <!-- Tab 4: Map & Site Settings -->
+    <div id="tab-settings" class="tab-pane" style="display: none;">
+      <div class="glass-card" style="padding: 1.75rem; max-width: 800px; margin: 0 auto;">
+        <h3 style="font-family: var(--font-heading); color: var(--accent-gold); margin-bottom: 0.5rem;">
+          <i class="fa-solid fa-map-location-dot"></i> Map Location & Site Details Manager
+        </h3>
+        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1.5rem;">
+          Non-technical management section: Edit Google Map embed URL, restaurant address, phone number, and operating hours.
+        </p>
+
+        <form id="settings-form">
+          <div style="margin-bottom: 1.25rem;">
+            <label class="form-label" style="display: block; margin-bottom: 0.4rem; font-size: 0.85rem; color: var(--text-primary);">Google Maps Embed URL</label>
+            <input type="text" id="setting-map-url" class="form-control" placeholder="https://www.google.com/maps/embed?pb=..." style="width: 100%; padding: 0.7rem;">
+            <small style="color: var(--text-secondary); font-size: 0.75rem;">Paste Google Maps 'Share -> Embed a map' iframe src URL.</small>
+          </div>
+
+          <div style="margin-bottom: 1.25rem;">
+            <label class="form-label" style="display: block; margin-bottom: 0.4rem; font-size: 0.85rem; color: var(--text-primary);">Restaurant Address</label>
+            <input type="text" id="setting-address" class="form-control" placeholder="777 Grand Celestial Avenue, Suite 100, Metropolis, NY 10001" style="width: 100%; padding: 0.7rem;">
+          </div>
+
+          <div style="margin-bottom: 1.25rem;">
+            <label class="form-label" style="display: block; margin-bottom: 0.4rem; font-size: 0.85rem; color: var(--text-primary);">Contact Phone / Email</label>
+            <input type="text" id="setting-phone" class="form-control" placeholder="+1 (555) 888-9999 • concierge@tasteofheaven.com" style="width: 100%; padding: 0.7rem;">
+          </div>
+
+          <div style="margin-bottom: 1.5rem;">
+            <label class="form-label" style="display: block; margin-bottom: 0.4rem; font-size: 0.85rem; color: var(--text-primary);">Operating Hours</label>
+            <textarea id="setting-hours" class="form-control" rows="3" placeholder="Tue – Sun: 17:00 PM – 23:30 PM&#10;Monday: Closed for Culinary Research" style="width: 100%; padding: 0.7rem; font-family: inherit;"></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-gold" style="padding: 0.75rem 1.75rem;">
+            <i class="fa-solid fa-floppy-disk"></i> Save Site & Map Settings
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Food Item Add/Edit Glass Modal -->
+  <div id="food-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(12px); z-index: 99999; align-items: center; justify-content: center; padding: 1rem;">
+    <div class="glass-card" style="width: 100%; max-width: 550px; padding: 1.75rem; border: 1px solid var(--accent-gold); max-height: 90vh; overflow-y: auto;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+        <h3 id="food-modal-title" style="font-family: var(--font-heading); color: var(--accent-gold); margin: 0;">Add New Dish</h3>
+        <button id="btn-close-food-modal" style="background: transparent; border: none; color: var(--text-secondary); font-size: 1.4rem; cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <form id="food-form">
+        <input type="hidden" id="food-id">
+        <div style="margin-bottom: 1rem;">
+          <label class="form-label" style="display: block; font-size: 0.82rem; margin-bottom: 0.3rem;">Dish Title</label>
+          <input type="text" id="food-title" class="form-control" required style="width: 100%; padding: 0.65rem;" placeholder="e.g. A5 Wagyu Tenderloin">
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+          <div>
+            <label class="form-label" style="display: block; font-size: 0.82rem; margin-bottom: 0.3rem;">Category</label>
+            <select id="food-category" class="form-control" style="width: 100%; padding: 0.65rem;">
+              <option value="starters">Starters</option>
+              <option value="mains">Mains</option>
+              <option value="desserts">Desserts</option>
+              <option value="cocktails">Cocktails</option>
+              <option value="specials">Chef Specials</option>
+            </select>
+          </div>
+          <div>
+            <label class="form-label" style="display: block; font-size: 0.82rem; margin-bottom: 0.3rem;">Price ($)</label>
+            <input type="number" step="0.01" id="food-price" class="form-control" required style="width: 100%; padding: 0.65rem;" placeholder="45.00">
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+          <div>
+            <label class="form-label" style="display: block; font-size: 0.82rem; margin-bottom: 0.3rem;">Dietary Type</label>
+            <select id="food-veg" class="form-control" style="width: 100%; padding: 0.65rem;">
+              <option value="true">VEG</option>
+              <option value="false">NON-VEG</option>
+            </select>
+          </div>
+          <div>
+            <label class="form-label" style="display: block; font-size: 0.82rem; margin-bottom: 0.3rem;">Popular Dish?</label>
+            <select id="food-popular" class="form-control" style="width: 100%; padding: 0.65rem;">
+              <option value="true">Yes (Show Badge)</option>
+              <option value="false">No</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 1rem;">
+          <label class="form-label" style="display: block; font-size: 0.82rem; margin-bottom: 0.3rem;">Image URL</label>
+          <input type="text" id="food-image" class="form-control" required style="width: 100%; padding: 0.65rem;" placeholder="https://images.unsplash.com/...">
+        </div>
+
+        <div style="margin-bottom: 1.25rem;">
+          <label class="form-label" style="display: block; font-size: 0.82rem; margin-bottom: 0.3rem;">Description</label>
+          <textarea id="food-desc" class="form-control" rows="3" style="width: 100%; padding: 0.65rem; font-family: inherit;" placeholder="Pan-seared A5 Wagyu with black truffle reduction..."></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-gold" style="width: 100%; padding: 0.75rem;">
+          <i class="fa-solid fa-check"></i> Save Dish to Website Menu
+        </button>
+      </form>
     </div>
   </div>
 
@@ -635,6 +671,150 @@
         document.getElementById('stat-reservations').textContent = combinedRes.length;
         document.getElementById('stat-orders').textContent = combinedOrders.length;
       }
+
+      // Default Menu items
+      const defaultMenu = [
+        { id: 1, title: "A5 Miyazaki Wagyu Tenderloin", category: "specials", price: 185.00, veg: false, popular: true, image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=600&q=80", description: "Pan-seared A5 Wagyu with black truffle reduction." },
+        { id: 2, title: "Butter-Poached Maine Lobster", category: "mains", price: 145.00, veg: false, popular: true, image: "https://images.unsplash.com/photo-1551248429-40975aa4de74?auto=format&fit=crop&w=600&q=80", description: "Sous-vide Maine lobster tail with saffron risotto." },
+        { id: 3, title: "Wild Organic Truffle Carpaccio", category: "starters", price: 68.00, veg: true, popular: true, image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80", description: "Paper-thin black truffle slices with Parmigiano crisp." },
+        { id: 4, title: "Pan-Seared Chilean Sea Bass", category: "mains", price: 120.00, veg: false, popular: false, image: "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=600&q=80", description: "Wild Chilean Sea Bass with dashi broth." },
+        { id: 5, title: "Gold Leaf Chocolate Sphere", category: "desserts", price: 45.00, veg: true, popular: true, image: "https://images.unsplash.com/photo-1579372786545-d24232daf58c?auto=format&fit=crop&w=600&q=80", description: "24-Karat gold encasing dark chocolate mousse." },
+        { id: 6, title: "Celestial Smoked Old Fashioned", category: "cocktails", price: 32.00, veg: true, popular: true, image: "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&fit=crop&w=600&q=80", description: "Macallan 18yr scotch with smoked applewood bitters." },
+        { id: 7, title: "Heirloom Burrata & Peach Caviar", category: "starters", price: 55.00, veg: true, popular: false, image: "https://images.unsplash.com/photo-1592417817098-8f3d6eb231fc?auto=format&fit=crop&w=600&q=80", description: "Handmade Pugliese burrata with heirloom tomatoes." },
+        { id: 8, title: "Deconstructed Golden Mille-Feuille", category: "desserts", price: 40.00, veg: true, popular: false, image: "https://images.unsplash.com/photo-1587314168485-3236d6710814?auto=format&fit=crop&w=600&q=80", description: "Caramelized puff pastry with vanilla bean cream." }
+      ];
+
+      function getAdminMenu() {
+        return JSON.parse(localStorage.getItem('taste_custom_menu')) || defaultMenu;
+      }
+
+      function renderAdminMenu() {
+        const menuList = getAdminMenu();
+        const tbody = document.getElementById('menu-tbody');
+        const statDishes = document.getElementById('stat-dishes');
+        if (statDishes) statDishes.textContent = menuList.length;
+
+        if (tbody) {
+          tbody.innerHTML = menuList.map(item => `
+            <tr>
+              <td style="font-weight: 600;">#${item.id}</td>
+              <td><img src="${item.image}" alt="${item.title}" style="width: 44px; height: 44px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border-gold);" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=600&q=80';"></td>
+              <td style="font-weight: 600; color: var(--text-primary);">${item.title}</td>
+              <td><span class="badge badge-gold">${item.category}</span></td>
+              <td>$${parseFloat(item.price).toFixed(2)}</td>
+              <td>${item.veg ? '<span class="badge badge-veg">VEG</span>' : '<span class="badge badge-nonveg">NON-VEG</span>'}</td>
+              <td>
+                <div style="display: flex; gap: 0.5rem;">
+                  <button onclick="editFoodItem(${item.id})" class="btn btn-gold" style="padding: 0.35rem 0.65rem; font-size: 0.75rem;"><i class="fa-solid fa-pen-to-square"></i> Edit</button>
+                  <button onclick="deleteFoodItem(${item.id})" style="padding: 0.35rem 0.65rem; font-size: 0.75rem; background: rgba(239, 68, 68, 0.2); color: #EF4444; border: 1px solid #EF4444; border-radius: var(--radius-sm); cursor: pointer;"><i class="fa-solid fa-trash"></i> Delete</button>
+                </div>
+              </td>
+            </tr>
+          `).join('');
+        }
+      }
+
+      // Food Modal & Form Handlers
+      const foodModal = document.getElementById('food-modal');
+      const btnAddFood = document.getElementById('btn-add-food');
+      const btnCloseFoodModal = document.getElementById('btn-close-food-modal');
+      const foodForm = document.getElementById('food-form');
+
+      btnAddFood?.addEventListener('click', () => {
+        document.getElementById('food-modal-title').textContent = 'Add New Dish';
+        document.getElementById('food-id').value = '';
+        document.getElementById('food-title').value = '';
+        document.getElementById('food-category').value = 'mains';
+        document.getElementById('food-price').value = '';
+        document.getElementById('food-veg').value = 'false';
+        document.getElementById('food-popular').value = 'false';
+        document.getElementById('food-image').value = '';
+        document.getElementById('food-desc').value = '';
+        foodModal.style.display = 'flex';
+      });
+
+      btnCloseFoodModal?.addEventListener('click', () => {
+        foodModal.style.display = 'none';
+      });
+
+      window.editFoodItem = function(id) {
+        const menu = getAdminMenu();
+        const item = menu.find(m => m.id === id);
+        if (!item) return;
+
+        document.getElementById('food-modal-title').textContent = 'Edit Dish Details';
+        document.getElementById('food-id').value = item.id;
+        document.getElementById('food-title').value = item.title;
+        document.getElementById('food-category').value = item.category;
+        document.getElementById('food-price').value = item.price;
+        document.getElementById('food-veg').value = item.veg ? 'true' : 'false';
+        document.getElementById('food-popular').value = item.popular ? 'true' : 'false';
+        document.getElementById('food-image').value = item.image;
+        document.getElementById('food-desc').value = item.description || '';
+        foodModal.style.display = 'flex';
+      };
+
+      window.deleteFoodItem = function(id) {
+        if (!confirm('Are you sure you want to delete this dish from the menu?')) return;
+        let menu = getAdminMenu();
+        menu = menu.filter(m => m.id !== id);
+        localStorage.setItem('taste_custom_menu', JSON.stringify(menu));
+        renderAdminMenu();
+      };
+
+      foodForm?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const idVal = document.getElementById('food-id').value;
+        let menu = getAdminMenu();
+
+        const newItem = {
+          id: idVal ? parseInt(idVal) : (menu.length > 0 ? Math.max(...menu.map(m => m.id)) + 1 : 1),
+          title: document.getElementById('food-title').value.trim(),
+          category: document.getElementById('food-category').value,
+          price: parseFloat(document.getElementById('food-price').value),
+          veg: document.getElementById('food-veg').value === 'true',
+          popular: document.getElementById('food-popular').value === 'true',
+          image: document.getElementById('food-image').value.trim(),
+          description: document.getElementById('food-desc').value.trim(),
+          rating: 4.9
+        };
+
+        if (idVal) {
+          const idx = menu.findIndex(m => m.id === parseInt(idVal));
+          if (idx !== -1) menu[idx] = newItem;
+        } else {
+          menu.push(newItem);
+        }
+
+        localStorage.setItem('taste_custom_menu', JSON.stringify(menu));
+        foodModal.style.display = 'none';
+        renderAdminMenu();
+        alert('Menu item saved successfully!');
+      });
+
+      // Map & Site Settings Handler
+      const settingsForm = document.getElementById('settings-form');
+      const savedSiteSettings = JSON.parse(localStorage.getItem('taste_site_settings'));
+      if (savedSiteSettings) {
+        if (savedSiteSettings.mapUrl) document.getElementById('setting-map-url').value = savedSiteSettings.mapUrl;
+        if (savedSiteSettings.address) document.getElementById('setting-address').value = savedSiteSettings.address;
+        if (savedSiteSettings.phone) document.getElementById('setting-phone').value = savedSiteSettings.phone;
+        if (savedSiteSettings.hours) document.getElementById('setting-hours').value = savedSiteSettings.hours;
+      }
+
+      settingsForm?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const settingsData = {
+          mapUrl: document.getElementById('setting-map-url').value.trim(),
+          address: document.getElementById('setting-address').value.trim(),
+          phone: document.getElementById('setting-phone').value.trim(),
+          hours: document.getElementById('setting-hours').value.trim()
+        };
+        localStorage.setItem('taste_site_settings', JSON.stringify(settingsData));
+        alert('Map location & site details updated successfully!');
+      });
+
+      renderAdminMenu();
 
       // Sub-tab navigation
       const tabBtns = document.querySelectorAll('.admin-tab-btn');
