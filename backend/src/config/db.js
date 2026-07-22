@@ -81,7 +81,7 @@ const memoryDb = {
       rating: 5.0,
       veg: true,
       popular: true,
-      image_url: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=600&q=80",
+      image_url: "https://images.unsplash.com/photo-1579372786545-d24232daf58c?auto=format&fit=crop&w=600&q=80",
       description: "24-Karat edible gold encasing Valrhona dark chocolate mousse, hot raspberry coulis poured tableside.",
       allergens: "Dairy, Gluten, Soy",
       created_at: new Date().toISOString()

@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
       rating: 5.0,
       veg: true,
       popular: true,
-      image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=600&q=80",
+      image: "https://images.unsplash.com/photo-1579372786545-d24232daf58c?auto=format&fit=crop&w=600&q=80",
       description: "24-Karat edible gold encasing Valrhona dark chocolate mousse, hot raspberry coulis poured tableside.",
       allergens: "Dairy, Gluten, Soy"
     },
@@ -482,7 +482,7 @@ document.addEventListener('DOMContentLoaded', () => {
     menuGrid.innerHTML = filtered.map(item => `
       <div class="glass-card food-card" data-id="${item.id}">
         <div class="food-card-img-wrapper">
-          <img src="${item.image}" alt="${item.title}" class="food-card-img" loading="lazy">
+          <img src="${item.image}" alt="${item.title}" class="food-card-img" loading="lazy" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=600&q=80';">
           <div class="food-badges">
             ${item.veg ? '<span class="badge badge-veg"><i class="fa-solid fa-leaf"></i> VEG</span>' : '<span class="badge badge-nonveg"><i class="fa-solid fa-drumstick-bite"></i> NON-VEG</span>'}
             ${item.popular ? '<span class="badge badge-gold"><i class="fa-solid fa-fire"></i> POPULAR</span>' : ''}
