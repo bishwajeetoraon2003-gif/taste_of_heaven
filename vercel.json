@@ -6,11 +6,23 @@
       "use": "@vercel/node"
     },
     {
-      "src": "index.html",
+      "src": "css/*",
       "use": "@vercel/static"
     },
     {
-      "src": "admin.html",
+      "src": "js/*",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "robots.txt",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "sitemap.xml",
       "use": "@vercel/static"
     }
   ],
@@ -22,6 +34,14 @@
     {
       "src": "/api/(.*)",
       "dest": "backend/server.js"
+    },
+    {
+      "src": "/css/(.*)",
+      "dest": "/css/$1"
+    },
+    {
+      "src": "/js/(.*)",
+      "dest": "/js/$1"
     },
     {
       "src": "/(.*)",
