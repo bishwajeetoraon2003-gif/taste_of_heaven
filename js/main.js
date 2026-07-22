@@ -673,43 +673,75 @@ document.addEventListener('DOMContentLoaded', () => {
     if (onlineDetails) onlineDetails.style.display = 'block';
   });
 
-  // Checkout simulation with Customer Input Validation & Order ID Receipt Modal
+  // 1. Proceed to Checkout Button Handler (Opens Dedicated Checkout Modal)
   const btnCheckout = document.getElementById('btn-checkout');
-  btnCheckout?.addEventListener('click', async () => {
+  const checkoutModal = document.getElementById('checkout-modal');
+  const chkSummaryItems = document.getElementById('chk-summary-items');
+  const chkSummaryTotal = document.getElementById('chk-summary-total');
+
+  btnCheckout?.addEventListener('click', () => {
     if (cart.length === 0) {
       showToast('Your order cart is empty!', 'error');
       return;
     }
 
-    const custName = document.getElementById('cust-name')?.value.trim();
-    const custEmail = document.getElementById('cust-email')?.value.trim();
-    const custPhone = document.getElementById('cust-phone')?.value.trim();
-    const custAddress = document.getElementById('cust-address')?.value.trim();
+    closeCart();
 
-    // Friendly Input Validation
+    const subtotal = cart.reduce((acc, item) => acc + (item.price * item.qty), 0);
+    const total = subtotal * 1.10;
+
+    if (chkSummaryItems) {
+      chkSummaryItems.innerHTML = cart.map(i => `<div>${i.qty}x <strong>${i.title}</strong> - $${(i.price * i.qty).toFixed(2)}</div>`).join('');
+    }
+    if (chkSummaryTotal) {
+      chkSummaryTotal.textContent = `$${total.toFixed(2)}`;
+    }
+
+    if (checkoutModal) {
+      checkoutModal.style.display = 'flex';
+      checkoutModal.classList.add('active');
+    }
+  });
+
+  // 2. Place Order Button Handler (Validates Inputs, Creates Order, Sends Email, Triggers Receipt)
+  const btnPlaceOrder = document.getElementById('btn-place-order');
+  btnPlaceOrder?.addEventListener('click', async () => {
+    if (cart.length === 0) {
+      showToast('Your order cart is empty!', 'error');
+      if (checkoutModal) checkoutModal.style.display = 'none';
+      return;
+    }
+
+    const custName = document.getElementById('chk-name')?.value.trim() || document.getElementById('cust-name')?.value.trim();
+    const custEmail = document.getElementById('chk-email')?.value.trim() || document.getElementById('cust-email')?.value.trim();
+    const custPhone = document.getElementById('chk-phone')?.value.trim() || document.getElementById('cust-phone')?.value.trim();
+    const custAddress = document.getElementById('chk-address')?.value.trim() || document.getElementById('cust-address')?.value.trim();
+    const custNotes = document.getElementById('chk-notes')?.value.trim() || '';
+
+    // Required Field Validations
     if (!custName) {
       showToast('Please enter your Full Name!', 'error');
-      document.getElementById('cust-name')?.focus();
+      document.getElementById('chk-name')?.focus();
       return;
     }
 
     const emailRegex = /\S+@\S+\.\S+/;
     if (!custEmail || !emailRegex.test(custEmail)) {
       showToast('Please enter a valid Email Address!', 'error');
-      document.getElementById('cust-email')?.focus();
+      document.getElementById('chk-email')?.focus();
       return;
     }
 
     const phoneDigits = custPhone ? custPhone.replace(/\D/g, '') : '';
     if (!custPhone || phoneDigits.length < 7) {
       showToast('Please enter a valid Phone Number (min 7 digits)!', 'error');
-      document.getElementById('cust-phone')?.focus();
+      document.getElementById('chk-phone')?.focus();
       return;
     }
 
     if (!custAddress) {
       showToast('Please enter your Complete Delivery Address!', 'error');
-      document.getElementById('cust-address')?.focus();
+      document.getElementById('chk-address')?.focus();
       return;
     }
 
@@ -729,6 +761,7 @@ document.addEventListener('DOMContentLoaded', () => {
       customerEmail: custEmail,
       customerPhone: custPhone,
       deliveryAddress: custAddress,
+      deliveryNotes: custNotes,
       orderType: 'delivery',
       paymentMethod: payMethod,
       items: cart
@@ -755,6 +788,7 @@ document.addEventListener('DOMContentLoaded', () => {
       customerEmail: custEmail,
       customerPhone: custPhone,
       deliveryAddress: custAddress,
+      deliveryNotes: custNotes,
       items: orderItemsSummary,
       total: total.toFixed(2),
       paymentMethod: payMethod,
@@ -763,10 +797,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     localStorage.setItem('taste_orders', JSON.stringify(localOrders));
 
+    // Reset Cart & Close Checkout Modal
     cart = [];
     localStorage.removeItem('taste_cart');
     updateCartUI();
-    closeCart();
+    
+    if (checkoutModal) {
+      checkoutModal.classList.remove('active');
+      checkoutModal.style.display = 'none';
+    }
 
     // Trigger Gourmet Order Receipt Success Modal
     const orderReceiptModal = document.getElementById('order-receipt-modal');
@@ -785,7 +824,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (document.getElementById('ord-ref')) document.getElementById('ord-ref').textContent = orderRef;
     if (document.getElementById('ord-customer')) document.getElementById('ord-customer').textContent = `${custName} (${custEmail})`;
     if (document.getElementById('ord-phone')) document.getElementById('ord-phone').textContent = custPhone;
-    if (document.getElementById('ord-address')) document.getElementById('ord-address').textContent = custAddress;
+    if (document.getElementById('ord-address')) document.getElementById('ord-address').textContent = custNotes ? `${custAddress} (Note: ${custNotes})` : custAddress;
     if (document.getElementById('ord-payment')) document.getElementById('ord-payment').textContent = payMethod;
     if (document.getElementById('ord-items')) document.getElementById('ord-items').textContent = orderItemsSummary;
     if (document.getElementById('ord-total')) document.getElementById('ord-total').textContent = `$${total.toFixed(2)}`;

@@ -1181,10 +1181,68 @@
       </div>
 
       <button class="btn btn-gold btn-checkout" id="btn-checkout" style="width: 100%; margin-top: 1rem;">
-        <i class="fa-solid fa-lock"></i> Complete & Place Order
+        <i class="fa-solid fa-arrow-right-to-bracket"></i> Proceed to Checkout
       </button>
     </div>
   </aside>
+
+  <!-- ==========================================================================
+       DEDICATED GOURMET CHECKOUT MODAL
+       ========================================================================== -->
+  <div class="modal-overlay" id="checkout-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(12px); z-index: 999998; align-items: center; justify-content: center; padding: 1rem;">
+    <div class="glass-card" style="max-width: 650px; width: 100%; border: 1px solid var(--border-gold); padding: 2rem; position: relative; max-height: 90vh; overflow-y: auto; background: var(--bg-secondary);">
+      <button id="btn-close-checkout-modal" onclick="document.getElementById('checkout-modal').classList.remove('active'); document.getElementById('checkout-modal').style.display='none';" style="position: absolute; top: 1rem; right: 1rem; background: transparent; border: none; color: var(--text-secondary); font-size: 1.4rem; cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
+
+      <div style="text-align: center; margin-bottom: 1.5rem; border-bottom: 1px dashed var(--border-gold); padding-bottom: 1rem;">
+        <i class="fa-solid fa-shield-halved text-gold" style="font-size: 2.2rem; margin-bottom: 0.5rem;"></i>
+        <h2 style="font-family: var(--font-heading); color: var(--accent-gold); margin-bottom: 0.2rem;">GOURMET CHECKOUT</h2>
+        <p style="font-size: 0.8rem; letter-spacing: 2px; color: var(--text-secondary);">ENTER YOUR DELIVERY DETAILS TO PLACE ORDER</p>
+      </div>
+
+      <form id="checkout-form" onsubmit="event.preventDefault();">
+        <div style="display: flex; flex-direction: column; gap: 0.9rem; margin-bottom: 1.5rem;">
+          <div>
+            <label style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--accent-gold); font-weight: 600; display: block; margin-bottom: 0.3rem;">Full Name *</label>
+            <input type="text" id="chk-name" class="form-input" placeholder="e.g. Lord Vance Sterling" required style="font-size: 0.88rem; padding: 0.6rem; background: var(--bg-tertiary); color: var(--text-primary); border: 1px solid var(--border-gold-subtle); border-radius: var(--radius-sm); width: 100%;">
+          </div>
+
+          <div style="display: flex; gap: 0.75rem;">
+            <div style="flex: 1;">
+              <label style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--accent-gold); font-weight: 600; display: block; margin-bottom: 0.3rem;">Email Address *</label>
+              <input type="email" id="chk-email" class="form-input" placeholder="vance@luxury.com" required style="font-size: 0.88rem; padding: 0.6rem; background: var(--bg-tertiary); color: var(--text-primary); border: 1px solid var(--border-gold-subtle); border-radius: var(--radius-sm); width: 100%;">
+            </div>
+            <div style="flex: 1;">
+              <label style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--accent-gold); font-weight: 600; display: block; margin-bottom: 0.3rem;">Phone Number *</label>
+              <input type="tel" id="chk-phone" class="form-input" placeholder="+1 (555) 000-8888" required style="font-size: 0.88rem; padding: 0.6rem; background: var(--bg-tertiary); color: var(--text-primary); border: 1px solid var(--border-gold-subtle); border-radius: var(--radius-sm); width: 100%;">
+            </div>
+          </div>
+
+          <div>
+            <label style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--accent-gold); font-weight: 600; display: block; margin-bottom: 0.3rem;">Complete Delivery Address *</label>
+            <textarea id="chk-address" class="form-input" rows="2" placeholder="Suite, Penthouse, Street Address, City..." required style="font-size: 0.88rem; padding: 0.6rem; background: var(--bg-tertiary); color: var(--text-primary); border: 1px solid var(--border-gold-subtle); border-radius: var(--radius-sm); width: 100%; resize: none;"></textarea>
+          </div>
+
+          <div>
+            <label style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); font-weight: 600; display: block; margin-bottom: 0.3rem;">Optional Delivery Notes (Gate Code, Special Instructions)</label>
+            <textarea id="chk-notes" class="form-input" rows="2" placeholder="e.g. Ring concierge bell, leave with doorman..." style="font-size: 0.88rem; padding: 0.6rem; background: var(--bg-tertiary); color: var(--text-primary); border: 1px solid var(--border-gold-subtle); border-radius: var(--radius-sm); width: 100%; resize: none;"></textarea>
+          </div>
+        </div>
+
+        <div style="background: var(--bg-tertiary); padding: 1rem; border-radius: var(--radius-sm); border: 1px solid var(--border-glass); margin-bottom: 1.5rem;">
+          <h4 style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; color: var(--accent-gold); margin-bottom: 0.5rem;"><i class="fa-solid fa-receipt"></i> Order Summary Preview</h4>
+          <div id="chk-summary-items" style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 0.5rem;"></div>
+          <div style="display: flex; justify-content: space-between; font-size: 1rem; font-weight: 700; border-top: 1px solid var(--border-glass); padding-top: 0.5rem;">
+            <span>Total Payable:</span>
+            <span id="chk-summary-total" class="text-gold">$0.00</span>
+          </div>
+        </div>
+
+        <button type="button" class="btn btn-gold" id="btn-place-order" style="width: 100%; padding: 0.8rem; font-size: 1rem; font-weight: 700; letter-spacing: 1px;">
+          <i class="fa-solid fa-lock"></i> Place Order & Confirm
+        </button>
+      </form>
+    </div>
+  </div>
 
   <!-- ==========================================================================
        GOURMET ORDER RECEIPT & SUCCESS MODAL

@@ -4,7 +4,7 @@ const catchAsync = require('../utils/catchAsync');
 const sendEmail = require('../utils/email');
 
 exports.createOrder = catchAsync(async (req, res, next) => {
-  const { customerName, customerEmail, customerPhone, deliveryAddress, items, orderType, paymentMethod } = req.body;
+  const { customerName, customerEmail, customerPhone, deliveryAddress, deliveryNotes, items, orderType, paymentMethod } = req.body;
 
   if (!items || !items.length) {
     return next(new AppError('Order must contain at least one item', 400));
@@ -13,6 +13,7 @@ exports.createOrder = catchAsync(async (req, res, next) => {
   const refCode = `#ORD-${Math.floor(10000 + Math.random() * 90000)}`;
   const payMethod = paymentMethod || 'Cash on Delivery (COD)';
   const address = deliveryAddress || 'Penthouse Suite, 740 Park Ave, NY';
+  const notes = deliveryNotes || '';
 
   let subtotal = 0;
   const processedItems = items.map(item => {
@@ -60,7 +61,7 @@ Order ID:        ${refCode}
 Date & Time:     ${nowStr}
 Phone Number:    ${customerPhone || 'N/A'}
 Delivery Address:${address}
-Payment Method:  ${payMethod}
+${notes ? `Delivery Notes:  ${notes}\n` : ''}Payment Method:  ${payMethod}
 Estimated Time:  30-45 Minutes
 
 ORDERED ITEMS:
