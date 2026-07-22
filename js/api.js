@@ -2,13 +2,18 @@
    TASTE OF HEAVEN - FRONTEND BACKEND API CONNECTOR
    ========================================================================== */
 
-const API_BASE_URL = 'http://localhost:5000/api/v1';
+const API_BASE_URL = (typeof window !== 'undefined' && window.location.origin && window.location.origin !== 'null' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1')
+  ? `${window.location.origin}/api/v1`
+  : 'http://localhost:5000/api/v1';
 
 window.TasteAPI = {
   // Check backend health
   async checkHealth() {
     try {
-      const res = await fetch('http://localhost:5000/health');
+      const healthUrl = (typeof window !== 'undefined' && window.location.origin && window.location.origin !== 'null' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1')
+        ? `${window.location.origin}/health`
+        : 'http://localhost:5000/health';
+      const res = await fetch(healthUrl);
       return await res.json();
     } catch (e) {
       console.warn('Backend API offline. Operating in client fallback mode.');
@@ -84,6 +89,32 @@ window.TasteAPI = {
         body: JSON.stringify({ email, password })
       });
       return await res.json();
+    } catch (e) {
+      return null;
+    }
+  },
+
+  // Get Admin Reservations
+  async getAdminReservations(token) {
+    try {
+      const res = await fetch(`${API_BASE_URL}/admin/reservations`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      return data.data ? data.data.reservations : null;
+    } catch (e) {
+      return null;
+    }
+  },
+
+  // Get Admin Orders
+  async getAdminOrders(token) {
+    try {
+      const res = await fetch(`${API_BASE_URL}/admin/orders`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      return data.data ? data.data.orders : null;
     } catch (e) {
       return null;
     }

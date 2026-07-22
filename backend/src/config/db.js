@@ -62,6 +62,19 @@ const memoryDb = {
     },
     {
       id: 4,
+      title: "Pan-Seared Chilean Sea Bass",
+      category: "mains",
+      price: 120.00,
+      rating: 4.7,
+      veg: false,
+      popular: false,
+      image_url: "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=600&q=80",
+      description: "Wild-caught Chilean Sea Bass with dashi broth, baby bok choy, and ginger oil infusion.",
+      allergens: "Fish, Soy",
+      created_at: new Date().toISOString()
+    },
+    {
+      id: 5,
       title: "Gold Leaf Chocolate Sphere",
       category: "desserts",
       price: 45.00,
@@ -71,6 +84,45 @@ const memoryDb = {
       image_url: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=600&q=80",
       description: "24-Karat edible gold encasing Valrhona dark chocolate mousse, hot raspberry coulis poured tableside.",
       allergens: "Dairy, Gluten, Soy",
+      created_at: new Date().toISOString()
+    },
+    {
+      id: 6,
+      title: "Celestial Smoked Old Fashioned",
+      category: "cocktails",
+      price: 32.00,
+      rating: 4.9,
+      veg: true,
+      popular: true,
+      image_url: "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&fit=crop&w=600&q=80",
+      description: "Rare Macallan 18yr scotch, organic smoked applewood bitters, hand-carved ice sphere, and orange twist flame.",
+      allergens: "Alcohol",
+      created_at: new Date().toISOString()
+    },
+    {
+      id: 7,
+      title: "Heirloom Burrata & Peach Caviar",
+      category: "starters",
+      price: 55.00,
+      rating: 4.8,
+      veg: true,
+      popular: false,
+      image_url: "https://images.unsplash.com/photo-1592417817098-8f3d6eb231fc?auto=format&fit=crop&w=600&q=80",
+      description: "Handmade Pugliese burrata, heirloom tomatoes, balsamic spherification caviar, and fresh basil blossom oil.",
+      allergens: "Dairy",
+      created_at: new Date().toISOString()
+    },
+    {
+      id: 8,
+      title: "Deconstructed Golden Mille-Feuille",
+      category: "desserts",
+      price: 40.00,
+      rating: 4.9,
+      veg: true,
+      popular: false,
+      image_url: "https://images.unsplash.com/photo-1587314168485-3236d6710814?auto=format&fit=crop&w=600&q=80",
+      description: "Caramelized puff pastry, Tahitian vanilla bean diplomat cream, praline crunch, and gold leaf.",
+      allergens: "Gluten, Dairy",
       created_at: new Date().toISOString()
     }
   ],

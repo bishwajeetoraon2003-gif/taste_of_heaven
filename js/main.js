@@ -425,12 +425,13 @@ document.addEventListener('DOMContentLoaded', () => {
      10. MENU FILTERING, SEARCH, & 3D TILT CARDS
      -------------------------------------------------------------------------- */
   const menuGrid = document.getElementById('menu-grid');
-  const filterBtns = document.querySelectorAll('.filter-btn');
+  const menuFilterBtns = document.querySelectorAll('#filter-tabs .filter-btn');
   const searchInput = document.getElementById('menu-search');
   const filterVeg = document.getElementById('filter-veg');
   const filterPopular = document.getElementById('filter-popular');
 
   let activeCategory = 'all';
+  let currentLoadedMenu = MENU_DATA;
 
   async function renderMenu() {
     if (!menuGrid) return;
@@ -456,6 +457,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }));
       }
     }
+
+    currentLoadedMenu = dataSource;
 
     const filtered = dataSource.filter(item => {
       const matchCat = activeCategory === 'all' || item.category === activeCategory;
@@ -507,10 +510,9 @@ document.addEventListener('DOMContentLoaded', () => {
     attachCardEvents();
   }
 
-  filterBtns.forEach(btn => {
+  menuFilterBtns.forEach(btn => {
     btn.addEventListener('click', () => {
-      if (btn.classList.contains('gallery-filter-btn')) return; // ignore gallery filter buttons
-      document.querySelector('.filter-btn.active')?.classList.remove('active');
+      menuFilterBtns.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       activeCategory = btn.getAttribute('data-category');
       renderMenu();
@@ -579,7 +581,7 @@ document.addEventListener('DOMContentLoaded', () => {
   heroOrderBtn?.addEventListener('click', openCart);
 
   function addToCart(id) {
-    const dish = MENU_DATA.find(item => item.id === id);
+    const dish = (currentLoadedMenu && currentLoadedMenu.find(item => item.id === id)) || MENU_DATA.find(item => item.id === id);
     if (!dish) return;
 
     const existing = cart.find(item => item.id === id);
@@ -671,15 +673,34 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
+    const subtotal = cart.reduce((acc, item) => acc + (item.price * item.qty), 0);
+    const total = subtotal * 1.10;
+    const orderRef = `#ORD-${Math.floor(10000 + Math.random() * 90000)}`;
+
+    const orderPayload = {
+      customerName: 'Valued Guest',
+      customerEmail: 'guest@tasteofheaven.com',
+      customerPhone: '+1 555 000 8888',
+      orderType: 'delivery',
+      items: cart
+    };
+
     if (window.TasteAPI) {
-      await window.TasteAPI.createOrder({
-        customerName: 'Valued Guest',
-        customerEmail: 'guest@tasteofheaven.com',
-        customerPhone: '+1 555 000 8888',
-        orderType: 'delivery',
-        items: cart
-      });
+      await window.TasteAPI.createOrder(orderPayload);
     }
+
+    // Save to local storage for Admin Panel sync
+    let localOrders = JSON.parse(localStorage.getItem('taste_orders')) || [];
+    localOrders.unshift({
+      referenceCode: orderRef,
+      customerName: 'Valued Guest',
+      customerEmail: 'guest@tasteofheaven.com',
+      items: cart.map(i => `${i.qty}x ${i.title}`).join(', '),
+      total: total.toFixed(2),
+      status: 'received',
+      createdAt: new Date().toISOString()
+    });
+    localStorage.setItem('taste_orders', JSON.stringify(localOrders));
 
     cart = [];
     localStorage.removeItem('taste_cart');
@@ -840,9 +861,25 @@ document.addEventListener('DOMContentLoaded', () => {
     if (window.TasteAPI) {
       const apiRes = await window.TasteAPI.createReservation(resPayload);
       if (apiRes && apiRes.data && apiRes.data.reservation) {
-        refCode = apiRes.data.reservation.referenceCode;
+        refCode = apiRes.data.reservation.referenceCode || apiRes.data.reservation.reference_code || refCode;
       }
     }
+
+    // Save to local storage for Admin Panel sync
+    let localRes = JSON.parse(localStorage.getItem('taste_reservations')) || [];
+    localRes.unshift({
+      referenceCode: refCode,
+      guestName: name,
+      guestEmail: email,
+      guestPhone: phone,
+      guestsCount: guests,
+      reservationDate: date,
+      reservationTime: time,
+      tableAtmosphere: tableBtn,
+      status: 'confirmed',
+      createdAt: new Date().toISOString()
+    });
+    localStorage.setItem('taste_reservations', JSON.stringify(localRes));
 
     document.getElementById('conf-ref').textContent = refCode;
     document.getElementById('conf-name').textContent = name;
@@ -896,6 +933,7 @@ document.addEventListener('DOMContentLoaded', () => {
         animatedStats = true;
         statNumbers.forEach(stat => {
           const target = parseInt(stat.getAttribute('data-target'));
+          const suffix = stat.getAttribute('data-suffix') || '+';
           let count = 0;
           const step = Math.ceil(target / 40);
           const counterInterval = setInterval(() => {
@@ -904,7 +942,7 @@ document.addEventListener('DOMContentLoaded', () => {
               count = target;
               clearInterval(counterInterval);
             }
-            stat.textContent = `${count}${stat.id === 'stat-years' ? '+' : '+'}`;
+            stat.textContent = `${count}${suffix}`;
           }, 30);
         });
       }

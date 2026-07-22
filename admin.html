@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Taste of Heaven | Executive Admin Portal</title>
+  
+  <meta name="description" content="Taste of Heaven Executive Management & Admin Dashboard Portal">
+  <meta name="robots" content="noindex, nofollow">
+
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Main Design System Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+
+  <style>
+    .admin-body {
+      min-height: 100vh;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+    }
+
+    .admin-login-wrapper {
+      min-height: calc(100vh - 80px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+    }
+
+    .admin-login-card {
+      width: 100%;
+      max-width: 440px;
+      padding: 2.5rem;
+      border-radius: var(--radius-md);
+      background: var(--bg-glass-card);
+      border: 1px solid var(--border-gold);
+      box-shadow: var(--shadow-lg);
+      backdrop-filter: blur(20px);
+      text-align: center;
+    }
+
+    .admin-header-nav {
+      height: 80px;
+      border-bottom: 1px solid var(--border-glass);
+      background: var(--bg-glass);
+      backdrop-filter: blur(15px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .demo-credentials-pill {
+      background: rgba(212, 175, 55, 0.1);
+      border: 1px dashed var(--accent-gold);
+      border-radius: var(--radius-sm);
+      padding: 0.75rem 1rem;
+      margin-bottom: 1.5rem;
+      text-align: left;
+      font-size: 0.85rem;
+    }
+
+    .demo-credentials-pill code {
+      color: var(--accent-gold-bright);
+      font-family: monospace;
+      font-weight: 600;
+    }
+
+    .dashboard-container {
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+      display: none;
+    }
+
+    .dashboard-container.active {
+      display: block;
+    }
+
+    .admin-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .admin-stat-card {
+      padding: 1.5rem;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+    }
+
+    .admin-stat-icon {
+      width: 54px;
+      height: 54px;
+      border-radius: 12px;
+      background: rgba(212, 175, 55, 0.15);
+      border: 1px solid var(--border-gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      color: var(--accent-gold);
+    }
+
+    .admin-stat-val {
+      font-family: var(--font-heading);
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .admin-stat-label {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .admin-tab-nav {
+      display: flex;
+      gap: 0.75rem;
+      border-bottom: 1px solid var(--border-glass);
+      margin-bottom: 2rem;
+      overflow-x: auto;
+    }
+
+    .admin-tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      padding: 0.85rem 1.5rem;
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all var(--transition-fast);
+      white-space: nowrap;
+    }
+
+    .admin-tab-btn:hover {
+      color: var(--accent-gold);
+    }
+
+    .admin-tab-btn.active {
+      color: var(--accent-gold-bright);
+      border-bottom-color: var(--accent-gold);
+    }
+
+    .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+
+    .admin-table th, .admin-table td {
+      padding: 1rem 1.25rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border-glass);
+    }
+
+    .admin-table th {
+      font-family: var(--font-heading);
+      color: var(--accent-gold);
+      font-size: 0.8rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .admin-table tbody tr:hover {
+      background: rgba(212, 175, 55, 0.04);
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: var(--radius-full);
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .status-badge.confirmed { background: rgba(16, 185, 129, 0.2); color: #10B981; border: 1px solid #10B981; }
+    .status-badge.pending { background: rgba(245, 158, 11, 0.2); color: #F59E0B; border: 1px solid #F59E0B; }
+    .status-badge.admin { background: rgba(212, 175, 55, 0.2); color: var(--accent-gold-bright); border: 1px solid var(--accent-gold); }
+  </style>
+</head>
+<body class="admin-body">
+
+  <!-- Admin Navigation Bar -->
+  <header class="admin-header-nav">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-icon"><i class="fa-solid fa-crown text-gold"></i></div>
+      <div class="nav-logo-text">TASTE OF <span>HEAVEN</span> <small style="font-size: 0.65rem; color: var(--accent-gold); margin-left: 0.5rem; letter-spacing: 1px;">ADMIN PORTAL</small></div>
+    </a>
+
+    <div style="display: flex; gap: 1rem; align-items: center;">
+      <a href="index.html" class="btn btn-outline-gold" style="padding: 0.5rem 1.25rem; font-size: 0.8rem;">
+        <i class="fa-solid fa-arrow-left"></i> Main Site
+      </a>
+      <button class="btn btn-gold" id="btn-logout" style="padding: 0.5rem 1.25rem; font-size: 0.8rem; display: none;">
+        <i class="fa-solid fa-right-from-bracket"></i> Logout
+      </button>
+    </div>
+  </header>
+
+  <!-- Login Section -->
+  <div class="admin-login-wrapper" id="login-section">
+    <div class="admin-login-card">
+      <div style="font-size: 2.5rem; color: var(--accent-gold); margin-bottom: 0.75rem;">
+        <i class="fa-solid fa-user-shield"></i>
+      </div>
+      <h2 style="font-family: var(--font-heading); font-size: 1.6rem; margin-bottom: 0.25rem;">Executive Login</h2>
+      <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1.5rem;">Access Taste of Heaven management suite</p>
+
+      <!-- Preset Credentials Hint -->
+      <div class="demo-credentials-pill">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+          <strong class="text-gold"><i class="fa-solid fa-key"></i> Default Admin Credentials:</strong>
+          <button id="btn-autofill" style="background: transparent; border: none; color: var(--accent-gold-bright); text-decoration: underline; font-size: 0.75rem; cursor: pointer;">Auto-fill</button>
+        </div>
+        <div>Email: <code>admin@tasteofheaven.com</code></div>
+        <div>Password: <code>admin123</code></div>
+      </div>
+
+      <form id="admin-login-form">
+        <div style="text-align: left; margin-bottom: 1.25rem;">
+          <label class="form-label" for="admin-email">Admin Email</label>
+          <input type="email" id="admin-email" class="form-control" placeholder="admin@tasteofheaven.com" required>
+        </div>
+
+        <div style="text-align: left; margin-bottom: 1.5rem;">
+          <label class="form-label" for="admin-password">Password</label>
+          <input type="password" id="admin-password" class="form-control" placeholder="••••••••" required>
+        </div>
+
+        <div id="login-error-msg" style="color: #EF4444; font-size: 0.85rem; margin-bottom: 1rem; display: none;"></div>
+
+        <button type="submit" class="btn btn-gold" style="width: 100%; padding: 0.85rem;" id="btn-login-submit">
+          <i class="fa-solid fa-lock-open"></i> Login to Admin Console
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Admin Dashboard Console -->
+  <div class="dashboard-container" id="dashboard-section">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+      <div>
+        <h1 style="font-family: var(--font-heading); font-size: 1.8rem; color: var(--text-primary);">Executive Management Dashboard</h1>
+        <p style="font-size: 0.85rem; color: var(--text-secondary);">Real-time monitoring of reservations, gourmet orders, and menu catalog</p>
+      </div>
+      <div class="status-badge admin">
+        <i class="fa-solid fa-circle-check"></i> Authenticated: Executive Admin
+      </div>
+    </div>
+
+    <!-- Admin Stats Grid -->
+    <div class="admin-stats-grid">
+      <div class="glass-card admin-stat-card">
+        <div class="admin-stat-icon"><i class="fa-solid fa-dollar-sign"></i></div>
+        <div>
+          <div class="admin-stat-val" id="stat-revenue">$1,450.00</div>
+          <div class="admin-stat-label">Total Revenue</div>
+        </div>
+      </div>
+
+      <div class="glass-card admin-stat-card">
+        <div class="admin-stat-icon"><i class="fa-solid fa-calendar-check"></i></div>
+        <div>
+          <div class="admin-stat-val" id="stat-reservations">12</div>
+          <div class="admin-stat-label">Active Bookings</div>
+        </div>
+      </div>
+
+      <div class="glass-card admin-stat-card">
+        <div class="admin-stat-icon"><i class="fa-solid fa-bag-shopping"></i></div>
+        <div>
+          <div class="admin-stat-val" id="stat-orders">8</div>
+          <div class="admin-stat-label">Total Orders</div>
+        </div>
+      </div>
+
+      <div class="glass-card admin-stat-card">
+        <div class="admin-stat-icon"><i class="fa-solid fa-utensils"></i></div>
+        <div>
+          <div class="admin-stat-val" id="stat-dishes">8</div>
+          <div class="admin-stat-label">Menu Items</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Admin Sub-Navigation Tabs -->
+    <div class="admin-tab-nav">
+      <button class="admin-tab-btn active" data-tab="tab-reservations"><i class="fa-solid fa-calendar-days"></i> Table Reservations</button>
+      <button class="admin-tab-btn" data-tab="tab-orders"><i class="fa-solid fa-receipt"></i> Online Orders</button>
+      <button class="admin-tab-btn" data-tab="tab-menu"><i class="fa-solid fa-book-open"></i> Menu Items</button>
+    </div>
+
+    <!-- Tab 1: Reservations Table -->
+    <div id="tab-reservations" class="tab-pane">
+      <div class="glass-card" style="padding: 1.5rem; overflow-x: auto;">
+        <h3 style="font-family: var(--font-heading); margin-bottom: 1rem; color: var(--text-primary);">Table Bookings Log</h3>
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Ref Code</th>
+              <th>Guest Name</th>
+              <th>Email / Phone</th>
+              <th>Guests</th>
+              <th>Date & Time</th>
+              <th>Atmosphere</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="reservations-tbody">
+            <tr>
+              <td class="text-gold" style="font-weight: 600;">#TH-45992</td>
+              <td>Lord Sterling</td>
+              <td>sterling@luxury.com<br><small style="color: var(--text-muted);">+1 555 999 8888</small></td>
+              <td>2 Guests</td>
+              <td>2026-08-15 at 19:00</td>
+              <td>Metropolis Skyline View</td>
+              <td><span class="status-badge confirmed">Confirmed</span></td>
+            </tr>
+            <tr>
+              <td class="text-gold" style="font-weight: 600;">#TH-78102</td>
+              <td>Lady Victoria Sterling</td>
+              <td>victoria@luxury.com<br><small style="color: var(--text-muted);">+1 555 111 2222</small></td>
+              <td>4 Guests</td>
+              <td>2026-08-20 at 20:30</td>
+              <td>Royal VIP Lounge</td>
+              <td><span class="status-badge confirmed">Confirmed</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Tab 2: Orders Table -->
+    <div id="tab-orders" class="tab-pane" style="display: none;">
+      <div class="glass-card" style="padding: 1.5rem; overflow-x: auto;">
+        <h3 style="font-family: var(--font-heading); margin-bottom: 1rem; color: var(--text-primary);">Gourmet Online Orders</h3>
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Customer</th>
+              <th>Items Ordered</th>
+              <th>Total ($)</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="orders-tbody">
+            <tr>
+              <td class="text-gold" style="font-weight: 600;">#ORD-35160</td>
+              <td>Lady Victoria<br><small style="color: var(--text-muted);">victoria@luxury.com</small></td>
+              <td>1x A5 Miyazaki Wagyu Tenderloin</td>
+              <td>$203.50</td>
+              <td><span class="status-badge confirmed">Preparing</span></td>
+            </tr>
+            <tr>
+              <td class="text-gold" style="font-weight: 600;">#ORD-99142</td>
+              <td>Sir Arthur Pendelton<br><small style="color: var(--text-muted);">arthur@luxury.com</small></td>
+              <td>2x Gold Leaf Chocolate Sphere, 1x Celestial Smoked Old Fashioned</td>
+              <td>$134.20</td>
+              <td><span class="status-badge pending">Received</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Tab 3: Menu Catalog -->
+    <div id="tab-menu" class="tab-pane" style="display: none;">
+      <div class="glass-card" style="padding: 1.5rem; overflow-x: auto;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <h3 style="font-family: var(--font-heading); color: var(--text-primary);">Menu Catalog</h3>
+        </div>
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Item Name</th>
+              <th>Category</th>
+              <th>Price</th>
+              <th>Rating</th>
+              <th>Dietary</th>
+            </tr>
+          </thead>
+          <tbody id="menu-tbody">
+            <tr>
+              <td>1</td>
+              <td>A5 Miyazaki Wagyu Tenderloin</td>
+              <td><span class="badge badge-gold">specials</span></td>
+              <td>$185.00</td>
+              <td>★ 4.9</td>
+              <td>NON-VEG</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>Butter-Poached Maine Lobster</td>
+              <td><span class="badge badge-gold">mains</span></td>
+              <td>$145.00</td>
+              <td>★ 4.8</td>
+              <td>NON-VEG</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>Wild Organic Truffle Carpaccio</td>
+              <td><span class="badge badge-gold">starters</span></td>
+              <td>$68.00</td>
+              <td>★ 4.9</td>
+              <td>VEG</td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td>Pan-Seared Chilean Sea Bass</td>
+              <td><span class="badge badge-gold">mains</span></td>
+              <td>$120.00</td>
+              <td>★ 4.7</td>
+              <td>NON-VEG</td>
+            </tr>
+            <tr>
+              <td>5</td>
+              <td>Gold Leaf Chocolate Sphere</td>
+              <td><span class="badge badge-gold">desserts</span></td>
+              <td>$45.00</td>
+              <td>★ 5.0</td>
+              <td>VEG</td>
+            </tr>
+            <tr>
+              <td>6</td>
+              <td>Celestial Smoked Old Fashioned</td>
+              <td><span class="badge badge-gold">cocktails</span></td>
+              <td>$32.00</td>
+              <td>★ 4.9</td>
+              <td>VEG</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const loginSection = document.getElementById('login-section');
+      const dashboardSection = document.getElementById('dashboard-section');
+      const btnLogout = document.getElementById('btn-logout');
+      const btnAutofill = document.getElementById('btn-autofill');
+      const loginForm = document.getElementById('admin-login-form');
+      const emailInput = document.getElementById('admin-email');
+      const passInput = document.getElementById('admin-password');
+      const errorMsg = document.getElementById('login-error-msg');
+
+      // Auto fill credentials button
+      btnAutofill.addEventListener('click', () => {
+        emailInput.value = 'admin@tasteofheaven.com';
+        passInput.value = 'admin123';
+      });
+
+      // Check existing token
+      const existingToken = localStorage.getItem('taste_admin_token');
+      if (existingToken) {
+        showDashboard();
+      }
+
+      loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        errorMsg.style.display = 'none';
+        const email = emailInput.value.trim();
+        const password = passInput.value.trim();
+
+        let loginRes = null;
+        if (window.TasteAPI) {
+          loginRes = await window.TasteAPI.login(email, password);
+        }
+
+        // Direct bypass if backend offline or direct admin fallback
+        if ((loginRes && loginRes.status === 'success') || (email === 'admin@tasteofheaven.com' && password === 'admin123')) {
+          const token = (loginRes && loginRes.token) ? loginRes.token : 'admin-system-session-jwt';
+          localStorage.setItem('taste_admin_token', token);
+          showDashboard();
+        } else {
+          errorMsg.textContent = 'Invalid credentials. Please enter valid admin email and password.';
+          errorMsg.style.display = 'block';
+        }
+      });
+
+      btnLogout.addEventListener('click', () => {
+        localStorage.removeItem('taste_admin_token');
+        loginSection.style.display = 'flex';
+        dashboardSection.classList.remove('active');
+        btnLogout.style.display = 'none';
+      });
+
+      function showDashboard() {
+        loginSection.style.display = 'none';
+        dashboardSection.classList.add('active');
+        btnLogout.style.display = 'inline-block';
+        loadAdminData();
+      }
+
+      async function loadAdminData() {
+        const token = localStorage.getItem('taste_admin_token');
+
+        // 1. Fetch Reservations
+        let reservations = [];
+        if (window.TasteAPI && token) {
+          const apiRes = await window.TasteAPI.getAdminReservations(token);
+          if (apiRes && Array.isArray(apiRes)) reservations = apiRes;
+        }
+        const localRes = JSON.parse(localStorage.getItem('taste_reservations')) || [];
+        const combinedRes = [...localRes];
+        reservations.forEach(r => {
+          const ref = r.referenceCode || r.reference_code;
+          if (!combinedRes.some(cr => (cr.referenceCode === ref || cr.reference_code === ref))) {
+            combinedRes.push(r);
+          }
+        });
+
+        // 2. Fetch Orders
+        let orders = [];
+        if (window.TasteAPI && token) {
+          const apiOrders = await window.TasteAPI.getAdminOrders(token);
+          if (apiOrders && Array.isArray(apiOrders)) orders = apiOrders;
+        }
+        const localOrders = JSON.parse(localStorage.getItem('taste_orders')) || [];
+        const combinedOrders = [...localOrders];
+        orders.forEach(o => {
+          const ref = o.referenceCode || o.reference_code;
+          if (!combinedOrders.some(co => (co.referenceCode === ref || co.reference_code === ref))) {
+            combinedOrders.push(o);
+          }
+        });
+
+        // Default demo data if no user reservations/orders exist yet
+        if (combinedRes.length === 0) {
+          combinedRes.push(
+            { referenceCode: '#TH-45992', guestName: 'Lord Sterling', guestEmail: 'sterling@luxury.com', guestPhone: '+1 555 999 8888', guestsCount: 2, reservationDate: '2026-08-15', reservationTime: '19:00', tableAtmosphere: 'Metropolis Skyline View', status: 'confirmed' },
+            { referenceCode: '#TH-78102', guestName: 'Lady Victoria Sterling', guestEmail: 'victoria@luxury.com', guestPhone: '+1 555 111 2222', guestsCount: 4, reservationDate: '2026-08-20', reservationTime: '20:30', tableAtmosphere: 'Royal VIP Lounge', status: 'confirmed' }
+          );
+        }
+
+        if (combinedOrders.length === 0) {
+          combinedOrders.push(
+            { referenceCode: '#ORD-35160', customerName: 'Lady Victoria', customerEmail: 'victoria@luxury.com', items: '1x A5 Miyazaki Wagyu Tenderloin', total: '203.50', status: 'preparing' },
+            { referenceCode: '#ORD-99142', customerName: 'Sir Arthur Pendelton', customerEmail: 'arthur@luxury.com', items: '2x Gold Leaf Chocolate Sphere, 1x Celestial Smoked Old Fashioned', total: '134.20', status: 'received' }
+          );
+        }
+
+        // Render Reservations Table
+        const resTbody = document.getElementById('reservations-tbody');
+        if (resTbody) {
+          resTbody.innerHTML = combinedRes.map(r => `
+            <tr>
+              <td class="text-gold" style="font-weight: 600;">${r.referenceCode || r.reference_code || '#TH-00000'}</td>
+              <td>${r.guestName || r.guest_name || 'Guest'}</td>
+              <td>${r.guestEmail || r.guest_email || 'N/A'}<br><small style="color: var(--text-muted);">${r.guestPhone || r.guest_phone || ''}</small></td>
+              <td>${r.guestsCount || r.guests_count || 2} Guest(s)</td>
+              <td>${r.reservationDate || r.reservation_date || ''} at ${r.reservationTime || r.reservation_time || ''}</td>
+              <td>${r.tableAtmosphere || r.table_atmosphere || 'Standard'}</td>
+              <td><span class="status-badge confirmed">${(r.status || 'Confirmed').toUpperCase()}</span></td>
+            </tr>
+          `).join('');
+        }
+
+        // Render Orders Table
+        const ordersTbody = document.getElementById('orders-tbody');
+        if (ordersTbody) {
+          ordersTbody.innerHTML = combinedOrders.map(o => {
+            let itemsTxt = o.items;
+            if (Array.isArray(o.items)) {
+              itemsTxt = o.items.map(i => `${i.quantity || i.qty || 1}x ${i.title || i.title}`).join(', ');
+            }
+            const totalVal = parseFloat(o.total || 0).toFixed(2);
+            return `
+              <tr>
+                <td class="text-gold" style="font-weight: 600;">${o.referenceCode || o.reference_code || '#ORD-00000'}</td>
+                <td>${o.customerName || o.customer_name || 'Valued Guest'}<br><small style="color: var(--text-muted);">${o.customerEmail || o.customer_email || ''}</small></td>
+                <td>${itemsTxt || 'Gourmet Selection'}</td>
+                <td>$${totalVal}</td>
+                <td><span class="status-badge confirmed">${(o.status || 'Received').toUpperCase()}</span></td>
+              </tr>
+            `;
+          }).join('');
+        }
+
+        // Update Stat Cards
+        const totalRev = combinedOrders.reduce((acc, o) => acc + parseFloat(o.total || 0), 0);
+        document.getElementById('stat-revenue').textContent = `$${totalRev.toFixed(2)}`;
+        document.getElementById('stat-reservations').textContent = combinedRes.length;
+        document.getElementById('stat-orders').textContent = combinedOrders.length;
+      }
+
+      // Sub-tab navigation
+      const tabBtns = document.querySelectorAll('.admin-tab-btn');
+      const tabPanes = document.querySelectorAll('.tab-pane');
+
+      tabBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          tabBtns.forEach(b => b.classList.remove('active'));
+          tabPanes.forEach(p => p.style.display = 'none');
+
+          btn.classList.add('active');
+          const targetId = btn.getAttribute('data-tab');
+          document.getElementById(targetId).style.display = 'block';
+        });
+      });
+    });
+  </script>
+</body>
+</html>
