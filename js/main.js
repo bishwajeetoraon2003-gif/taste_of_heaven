@@ -673,11 +673,43 @@ document.addEventListener('DOMContentLoaded', () => {
     if (onlineDetails) onlineDetails.style.display = 'block';
   });
 
-  // Checkout simulation
+  // Checkout simulation with Customer Input Validation & Order ID Receipt Modal
   const btnCheckout = document.getElementById('btn-checkout');
   btnCheckout?.addEventListener('click', async () => {
     if (cart.length === 0) {
       showToast('Your order cart is empty!', 'error');
+      return;
+    }
+
+    const custName = document.getElementById('cust-name')?.value.trim();
+    const custEmail = document.getElementById('cust-email')?.value.trim();
+    const custPhone = document.getElementById('cust-phone')?.value.trim();
+    const custAddress = document.getElementById('cust-address')?.value.trim();
+
+    // Friendly Input Validation
+    if (!custName) {
+      showToast('Please enter your Full Name!', 'error');
+      document.getElementById('cust-name')?.focus();
+      return;
+    }
+
+    const emailRegex = /\S+@\S+\.\S+/;
+    if (!custEmail || !emailRegex.test(custEmail)) {
+      showToast('Please enter a valid Email Address!', 'error');
+      document.getElementById('cust-email')?.focus();
+      return;
+    }
+
+    const phoneDigits = custPhone ? custPhone.replace(/\D/g, '') : '';
+    if (!custPhone || phoneDigits.length < 7) {
+      showToast('Please enter a valid Phone Number (min 7 digits)!', 'error');
+      document.getElementById('cust-phone')?.focus();
+      return;
+    }
+
+    if (!custAddress) {
+      showToast('Please enter your Complete Delivery Address!', 'error');
+      document.getElementById('cust-address')?.focus();
       return;
     }
 
@@ -690,28 +722,40 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const subtotal = cart.reduce((acc, item) => acc + (item.price * item.qty), 0);
     const total = subtotal * 1.10;
-    const orderRef = `#ORD-${Math.floor(10000 + Math.random() * 90000)}`;
+    let orderRef = `#ORD-${Math.floor(10000 + Math.random() * 90000)}`;
 
     const orderPayload = {
-      customerName: 'Valued Guest',
-      customerEmail: 'guest@tasteofheaven.com',
-      customerPhone: '+1 555 000 8888',
+      customerName: custName,
+      customerEmail: custEmail,
+      customerPhone: custPhone,
+      deliveryAddress: custAddress,
       orderType: 'delivery',
       paymentMethod: payMethod,
       items: cart
     };
 
+    let emailSentOk = true;
+
     if (window.TasteAPI) {
-      await window.TasteAPI.createOrder(orderPayload);
+      const apiRes = await window.TasteAPI.createOrder(orderPayload);
+      if (apiRes && apiRes.data && apiRes.data.order) {
+        orderRef = apiRes.data.order.referenceCode || apiRes.data.order.reference_code || orderRef;
+      }
+      if (apiRes && apiRes.emailSent === false) {
+        emailSentOk = false;
+      }
     }
 
     // Save to local storage for Admin Panel sync
     let localOrders = JSON.parse(localStorage.getItem('taste_orders')) || [];
+    const orderItemsSummary = cart.map(i => `${i.qty}x ${i.title}`).join(', ');
     localOrders.unshift({
       referenceCode: orderRef,
-      customerName: 'Valued Guest',
-      customerEmail: 'guest@tasteofheaven.com',
-      items: cart.map(i => `${i.qty}x ${i.title}`).join(', '),
+      customerName: custName,
+      customerEmail: custEmail,
+      customerPhone: custPhone,
+      deliveryAddress: custAddress,
+      items: orderItemsSummary,
       total: total.toFixed(2),
       paymentMethod: payMethod,
       status: 'received',
@@ -723,7 +767,35 @@ document.addEventListener('DOMContentLoaded', () => {
     localStorage.removeItem('taste_cart');
     updateCartUI();
     closeCart();
-    showToast(`Order Placed (${payMethod})! Your Chef is preparing your gourmet order 🍾`, 'gold');
+
+    // Trigger Gourmet Order Receipt Success Modal
+    const orderReceiptModal = document.getElementById('order-receipt-modal');
+    const noticeEl = document.getElementById('email-status-notice');
+
+    if (noticeEl) {
+      if (emailSentOk) {
+        noticeEl.textContent = `Confirmation email sent to ${custEmail}.`;
+        noticeEl.style.color = '#10B981';
+      } else {
+        noticeEl.textContent = 'Order placed successfully. Confirmation email could not be sent.';
+        noticeEl.style.color = '#F59E0B';
+      }
+    }
+
+    if (document.getElementById('ord-ref')) document.getElementById('ord-ref').textContent = orderRef;
+    if (document.getElementById('ord-customer')) document.getElementById('ord-customer').textContent = `${custName} (${custEmail})`;
+    if (document.getElementById('ord-phone')) document.getElementById('ord-phone').textContent = custPhone;
+    if (document.getElementById('ord-address')) document.getElementById('ord-address').textContent = custAddress;
+    if (document.getElementById('ord-payment')) document.getElementById('ord-payment').textContent = payMethod;
+    if (document.getElementById('ord-items')) document.getElementById('ord-items').textContent = orderItemsSummary;
+    if (document.getElementById('ord-total')) document.getElementById('ord-total').textContent = `$${total.toFixed(2)}`;
+
+    if (orderReceiptModal) {
+      orderReceiptModal.style.display = 'flex';
+      orderReceiptModal.classList.add('active');
+    }
+
+    showToast(`Order Placed! Order ID: ${orderRef} 🍾`, 'gold');
   });
 
   /* --------------------------------------------------------------------------

@@ -4,7 +4,7 @@ const catchAsync = require('../utils/catchAsync');
 const sendEmail = require('../utils/email');
 
 exports.createOrder = catchAsync(async (req, res, next) => {
-  const { customerName, customerEmail, customerPhone, items, orderType, paymentMethod } = req.body;
+  const { customerName, customerEmail, customerPhone, deliveryAddress, items, orderType, paymentMethod } = req.body;
 
   if (!items || !items.length) {
     return next(new AppError('Order must contain at least one item', 400));
@@ -12,6 +12,7 @@ exports.createOrder = catchAsync(async (req, res, next) => {
 
   const refCode = `#ORD-${Math.floor(10000 + Math.random() * 90000)}`;
   const payMethod = paymentMethod || 'Cash on Delivery (COD)';
+  const address = deliveryAddress || 'Penthouse Suite, 740 Park Ave, NY';
 
   let subtotal = 0;
   const processedItems = items.map(item => {
@@ -27,12 +28,14 @@ exports.createOrder = catchAsync(async (req, res, next) => {
 
   const taxAndService = subtotal * 0.10;
   const total = subtotal + taxAndService;
+  const nowStr = new Date().toLocaleString();
 
   const orderPayload = {
     reference_code: refCode,
     customer_name: customerName,
     customer_email: customerEmail,
     customer_phone: customerPhone || 'N/A',
+    delivery_address: address,
     order_type: orderType || 'delivery',
     payment_method: payMethod,
     subtotal,
@@ -40,6 +43,48 @@ exports.createOrder = catchAsync(async (req, res, next) => {
     total,
     status: 'received'
   };
+
+  const itemsSummaryText = processedItems.map(i => `${i.quantity}x ${i.title} ($${(i.unit_price * i.quantity).toFixed(2)})`).join(', ');
+
+  const emailBody = `
+Dear ${customerName},
+
+Thank you for dining with Taste of Heaven! Your gourmet order has been successfully placed and received.
+
+============================================================
+ORDER CONFIRMATION RECEIPT - TASTE OF HEAVEN
+============================================================
+Restaurant Name: Taste of Heaven Michelin Dining
+Customer Name:   ${customerName}
+Order ID:        ${refCode}
+Date & Time:     ${nowStr}
+Phone Number:    ${customerPhone || 'N/A'}
+Delivery Address:${address}
+Payment Method:  ${payMethod}
+Estimated Time:  30-45 Minutes
+
+ORDERED ITEMS:
+${itemsSummaryText}
+
+Subtotal:        $${subtotal.toFixed(2)}
+Tax & Sommelier: $${taxAndService.toFixed(2)}
+Total Amount:    $${total.toFixed(2)}
+
+============================================================
+Thank you for choosing Taste of Heaven. We are preparing your culinary experience with utmost care!
+`;
+
+  let emailSentSuccessfully = false;
+
+  try {
+    emailSentSuccessfully = await sendEmail({
+      email: customerEmail,
+      subject: `Order Confirmation - Taste of Heaven ${refCode}`,
+      message: emailBody
+    });
+  } catch (e) {
+    emailSentSuccessfully = false;
+  }
 
   if (supabase) {
     const { data: orderData, error: orderErr } = await supabase.from('orders').insert([orderPayload]).select().single();
@@ -49,15 +94,10 @@ exports.createOrder = catchAsync(async (req, res, next) => {
       const itemsPayload = processedItems.map(i => ({ ...i, order_id: orderData.id }));
       await supabase.from('order_items').insert(itemsPayload);
 
-      sendEmail({
-        email: customerEmail,
-        subject: `Order Receipt - Taste of Heaven ${refCode}`,
-        message: `Dear ${customerName}, your gourmet order (${refCode}) of $${total.toFixed(2)} has been received.`
-      }).catch(() => {});
-
       return res.status(201).json({
         status: 'success',
         source: 'supabase',
+        emailSent: emailSentSuccessfully,
         data: { order: { ...orderData, items: processedItems } }
       });
     }
@@ -69,6 +109,7 @@ exports.createOrder = catchAsync(async (req, res, next) => {
     customerName,
     customerEmail,
     customerPhone: customerPhone || 'N/A',
+    deliveryAddress: address,
     orderType: orderType || 'delivery',
     paymentMethod: payMethod,
     items: processedItems,
@@ -81,14 +122,9 @@ exports.createOrder = catchAsync(async (req, res, next) => {
 
   memoryDb.orders.push(newOrder);
 
-  sendEmail({
-    email: customerEmail,
-    subject: `Order Receipt - Taste of Heaven ${refCode}`,
-    message: `Dear ${customerName}, your gourmet order (${refCode}) of $${total.toFixed(2)} has been received.`
-  }).catch(() => {});
-
   res.status(201).json({
     status: 'success',
+    emailSent: emailSentSuccessfully,
     data: { order: newOrder }
   });
 });
