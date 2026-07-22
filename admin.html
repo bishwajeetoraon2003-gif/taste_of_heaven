@@ -192,6 +192,35 @@
     .status-badge.confirmed { background: rgba(16, 185, 129, 0.2); color: #10B981; border: 1px solid #10B981; }
     .status-badge.pending { background: rgba(245, 158, 11, 0.2); color: #F59E0B; border: 1px solid #F59E0B; }
     .status-badge.admin { background: rgba(212, 175, 55, 0.2); color: var(--accent-gold-bright); border: 1px solid var(--accent-gold); }
+
+    @media (max-width: 768px) {
+      .admin-header-nav {
+        padding: 0 1rem;
+        height: 70px;
+      }
+      .dashboard-container {
+        padding: 1.5rem 1rem;
+      }
+      .admin-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+      }
+      .admin-stat-card {
+        padding: 1rem;
+      }
+      .admin-stat-val {
+        font-size: 1.4rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .admin-stats-grid {
+        grid-template-columns: 1fr;
+      }
+      .admin-login-card {
+        padding: 1.75rem 1.25rem;
+      }
+    }
   </style>
 </head>
 <body class="admin-body">
