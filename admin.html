@@ -501,9 +501,36 @@
           </div>
         </div>
 
-        <div style="margin-bottom: 1rem;">
-          <label class="form-label" style="display: block; font-size: 0.82rem; margin-bottom: 0.3rem;">Image URL</label>
-          <input type="text" id="food-image" class="form-control" required style="width: 100%; padding: 0.65rem;" placeholder="https://images.unsplash.com/...">
+        <!-- Drag and Drop Dish Photo Dropzone -->
+        <div style="margin-bottom: 1.25rem;">
+          <label class="form-label" style="display: block; font-size: 0.82rem; margin-bottom: 0.4rem; color: var(--accent-gold);">Dish Photo (Drag & Drop or Choose File)</label>
+
+          <div id="image-dropzone" style="border: 2px dashed var(--border-gold); border-radius: var(--radius-sm); padding: 1.25rem; text-align: center; background: rgba(212, 175, 55, 0.05); cursor: pointer; transition: all var(--transition-fast); position: relative;">
+            <input type="file" id="food-file-input" accept="image/*" style="position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; z-index: 5;">
+            <i class="fa-solid fa-cloud-arrow-up" style="font-size: 2rem; color: var(--accent-gold); margin-bottom: 0.5rem;"></i>
+            <div style="font-size: 0.85rem; font-weight: 600; color: var(--text-primary);">Drag & Drop Photo Here or <span style="color: var(--accent-gold-bright); text-decoration: underline;">Browse Device</span></div>
+            <div style="font-size: 0.72rem; color: var(--text-secondary); margin-top: 0.25rem;">Supports JPG, PNG, WEBP, GIF (Auto Compressed)</div>
+          </div>
+
+          <!-- Live Image Preview Box -->
+          <div id="image-preview-container" style="display: none; margin-top: 0.75rem; align-items: center; gap: 1rem; padding: 0.6rem; background: var(--bg-secondary); border-radius: var(--radius-sm); border: 1px solid var(--border-gold-subtle);">
+            <img id="image-preview-img" src="" alt="Dish Preview" style="width: 54px; height: 54px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border-gold);">
+            <div style="flex: 1;">
+              <div id="image-preview-name" style="font-size: 0.82rem; font-weight: 600; color: var(--text-primary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 260px;">photo.jpg</div>
+              <div style="font-size: 0.72rem; color: #10B981;"><i class="fa-solid fa-circle-check"></i> Photo Ready & Compressed</div>
+            </div>
+            <button type="button" id="btn-remove-photo" style="background: rgba(239, 68, 68, 0.2); color: #EF4444; border: 1px solid #EF4444; padding: 0.35rem 0.65rem; border-radius: var(--radius-sm); font-size: 0.75rem; cursor: pointer;">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          </div>
+
+          <input type="hidden" id="food-image">
+
+          <!-- Advanced URL fallback toggle -->
+          <details style="margin-top: 0.5rem;">
+            <summary style="font-size: 0.75rem; color: var(--text-secondary); cursor: pointer;"><i class="fa-solid fa-link"></i> Or paste Image Web URL instead</summary>
+            <input type="text" id="food-image-url-manual" class="form-control" style="width: 100%; padding: 0.5rem; font-size: 0.8rem; margin-top: 0.4rem;" placeholder="https://images.unsplash.com/...">
+          </details>
         </div>
 
         <div style="margin-bottom: 1.25rem;">
@@ -714,6 +741,95 @@
         }
       }
 
+      // Image Drag & Drop and File Picker Handler
+      const dropzone = document.getElementById('image-dropzone');
+      const fileInput = document.getElementById('food-file-input');
+      const previewContainer = document.getElementById('image-preview-container');
+      const previewImg = document.getElementById('image-preview-img');
+      const previewName = document.getElementById('image-preview-name');
+      const btnRemovePhoto = document.getElementById('btn-remove-photo');
+      const foodImageVal = document.getElementById('food-image');
+      const foodImageUrlManual = document.getElementById('food-image-url-manual');
+
+      function compressAndSetPhoto(file) {
+        if (!file || !file.type.startsWith('image/')) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = new Image();
+          img.src = e.target.result;
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const maxDim = 800;
+            let w = img.width;
+            let h = img.height;
+            if (w > maxDim || h > maxDim) {
+              if (w > h) {
+                h = Math.round((h * maxDim) / w);
+                w = maxDim;
+              } else {
+                w = Math.round((w * maxDim) / h);
+                h = maxDim;
+              }
+            }
+            canvas.width = w;
+            canvas.height = h;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, w, h);
+            const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.85);
+
+            foodImageVal.value = compressedDataUrl;
+            previewImg.src = compressedDataUrl;
+            previewName.textContent = file.name || 'Uploaded Photo';
+            previewContainer.style.display = 'flex';
+          };
+        };
+        reader.readAsDataURL(file);
+      }
+
+      fileInput?.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files[0]) {
+          compressAndSetPhoto(e.target.files[0]);
+        }
+      });
+
+      dropzone?.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropzone.style.borderColor = 'var(--accent-gold-bright)';
+        dropzone.style.background = 'rgba(212, 175, 55, 0.15)';
+      });
+
+      dropzone?.addEventListener('dragleave', (e) => {
+        e.preventDefault();
+        dropzone.style.borderColor = 'var(--border-gold)';
+        dropzone.style.background = 'rgba(212, 175, 55, 0.05)';
+      });
+
+      dropzone?.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropzone.style.borderColor = 'var(--border-gold)';
+        dropzone.style.background = 'rgba(212, 175, 55, 0.05)';
+        if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+          compressAndSetPhoto(e.dataTransfer.files[0]);
+        }
+      });
+
+      btnRemovePhoto?.addEventListener('click', () => {
+        foodImageVal.value = '';
+        if (foodImageUrlManual) foodImageUrlManual.value = '';
+        previewContainer.style.display = 'none';
+        fileInput.value = '';
+      });
+
+      foodImageUrlManual?.addEventListener('input', (e) => {
+        const val = e.target.value.trim();
+        if (val) {
+          foodImageVal.value = val;
+          previewImg.src = val;
+          previewName.textContent = 'Web URL Photo';
+          previewContainer.style.display = 'flex';
+        }
+      });
+
       // Food Modal & Form Handlers
       const foodModal = document.getElementById('food-modal');
       const btnAddFood = document.getElementById('btn-add-food');
@@ -728,7 +844,9 @@
         document.getElementById('food-price').value = '';
         document.getElementById('food-veg').value = 'false';
         document.getElementById('food-popular').value = 'false';
-        document.getElementById('food-image').value = '';
+        foodImageVal.value = '';
+        if (foodImageUrlManual) foodImageUrlManual.value = '';
+        previewContainer.style.display = 'none';
         document.getElementById('food-desc').value = '';
         foodModal.style.display = 'flex';
       });
@@ -749,7 +867,15 @@
         document.getElementById('food-price').value = item.price;
         document.getElementById('food-veg').value = item.veg ? 'true' : 'false';
         document.getElementById('food-popular').value = item.popular ? 'true' : 'false';
-        document.getElementById('food-image').value = item.image;
+        foodImageVal.value = item.image;
+        if (foodImageUrlManual) foodImageUrlManual.value = item.image.startsWith('data:') ? '' : item.image;
+        if (item.image) {
+          previewImg.src = item.image;
+          previewName.textContent = item.title;
+          previewContainer.style.display = 'flex';
+        } else {
+          previewContainer.style.display = 'none';
+        }
         document.getElementById('food-desc').value = item.description || '';
         foodModal.style.display = 'flex';
       };
@@ -767,6 +893,8 @@
         const idVal = document.getElementById('food-id').value;
         let menu = getAdminMenu();
 
+        const imgVal = foodImageVal.value.trim() || 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=600&q=80';
+
         const newItem = {
           id: idVal ? parseInt(idVal) : (menu.length > 0 ? Math.max(...menu.map(m => m.id)) + 1 : 1),
           title: document.getElementById('food-title').value.trim(),
@@ -774,7 +902,7 @@
           price: parseFloat(document.getElementById('food-price').value),
           veg: document.getElementById('food-veg').value === 'true',
           popular: document.getElementById('food-popular').value === 'true',
-          image: document.getElementById('food-image').value.trim(),
+          image: imgVal,
           description: document.getElementById('food-desc').value.trim(),
           rating: 4.9
         };
