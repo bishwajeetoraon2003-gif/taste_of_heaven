@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
+const compression = require('compression');
 const path = require('path');
 
 const authRoutes = require('./routes/authRoutes');
@@ -17,6 +18,9 @@ const errorMiddleware = require('./middlewares/errorMiddleware');
 const AppError = require('./utils/appError');
 
 const app = express();
+
+// Gzip Compression Middleware for High-Speed API Responses
+app.use(compression());
 
 // Security HTTP headers
 app.use(helmet());
