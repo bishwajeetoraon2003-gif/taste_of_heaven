@@ -1548,8 +1548,8 @@ textarea,
 .newsletter-input {
   width: 100%;
   padding: 0.85rem 1.1rem;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid var(--border-glass);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-gold-subtle);
   border-radius: var(--radius-sm);
   color: var(--text-primary) !important;
   -webkit-text-fill-color: var(--text-primary) !important;
@@ -1565,12 +1565,47 @@ textarea,
   transition: all var(--transition-fast);
 }
 
+select,
+select.form-control {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-color: var(--bg-secondary) !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23D4AF37' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 1rem center !important;
+  background-size: 1.1rem !important;
+  padding-right: 2.75rem !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border-gold-subtle) !important;
+  cursor: pointer;
+}
+
+select option {
+  background-color: var(--bg-primary) !important;
+  color: var(--text-primary) !important;
+  padding: 0.75rem 1rem !important;
+  font-family: var(--font-body);
+}
+
+select option:checked,
+select option:hover {
+  background-color: var(--accent-gold-dark) !important;
+  color: #FFFFFF !important;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.8) sepia(1) saturate(5) hue-rotate(5deg);
+  cursor: pointer;
+}
+
 .form-control:focus,
 .menu-search-input:focus,
-.newsletter-input:focus {
-  border-color: var(--accent-gold);
-  box-shadow: 0 0 10px var(--accent-gold-glow);
-  background: rgba(255, 255, 255, 0.1);
+.newsletter-input:focus,
+select.form-control:focus {
+  border-color: var(--accent-gold) !important;
+  box-shadow: 0 0 12px var(--accent-gold-glow) !important;
+  background-color: var(--bg-tertiary) !important;
   color: var(--text-primary) !important;
   -webkit-text-fill-color: var(--text-primary) !important;
 }
