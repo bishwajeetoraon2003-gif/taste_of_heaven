@@ -441,16 +441,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Load custom menu if modified by Admin CMS
     const customMenu = JSON.parse(localStorage.getItem('taste_custom_menu'));
-    let dataSource = customMenu || MENU_DATA;
+    let dataSource = (Array.isArray(customMenu) && customMenu.length > 0) ? customMenu : MENU_DATA;
 
-    if (!customMenu && window.TasteAPI) {
+    if ((!customMenu || customMenu.length === 0) && window.TasteAPI) {
       const apiMenu = await window.TasteAPI.getMenu(activeCategory, searchVal);
       if (apiMenu && apiMenu.length > 0) {
         dataSource = apiMenu.map(m => ({
           id: m.id,
           title: m.title,
           category: m.category,
-          price: parseFloat(m.price),
+          price: parseFloat(m.price || 0),
           rating: parseFloat(m.rating || 4.9),
           veg: Boolean(m.veg),
           popular: Boolean(m.popular),
@@ -464,7 +464,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const filtered = dataSource.filter(item => {
       const matchCat = activeCategory === 'all' || item.category === activeCategory;
-      const matchSearch = !searchVal || item.title.toLowerCase().includes(searchVal) || item.description.toLowerCase().includes(searchVal);
+      const matchSearch = !searchVal || item.title.toLowerCase().includes(searchVal) || (item.description && item.description.toLowerCase().includes(searchVal));
       const matchVeg = !isVegOnly || item.veg;
       const matchPopular = !isPopularOnly || item.popular;
       return matchCat && matchSearch && matchVeg && matchPopular;
@@ -481,10 +481,13 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    menuGrid.innerHTML = filtered.map(item => `
+    menuGrid.innerHTML = filtered.map(item => {
+      const itemPrice = parseFloat(item.price || 0).toFixed(2);
+      const itemRating = parseFloat(item.rating || 4.9).toFixed(1);
+      return `
       <div class="glass-card food-card" data-id="${item.id}">
         <div class="food-card-img-wrapper">
-          <img src="${item.image}" alt="${item.title}" class="food-card-img" loading="lazy" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=600&q=80';">
+          <img src="${item.image || 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=600&q=80'}" alt="${item.title}" class="food-card-img" loading="lazy" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=600&q=80';">
           <div class="food-badges">
             ${item.veg ? '<span class="badge badge-veg"><i class="fa-solid fa-leaf"></i> VEG</span>' : '<span class="badge badge-nonveg"><i class="fa-solid fa-drumstick-bite"></i> NON-VEG</span>'}
             ${item.popular ? '<span class="badge badge-gold"><i class="fa-solid fa-fire"></i> POPULAR</span>' : ''}
@@ -493,12 +496,12 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="food-card-body">
           <div class="food-card-header">
             <h3 class="food-title">${item.title}</h3>
-            <div class="food-price">$${item.price.toFixed(2)}</div>
+            <div class="food-price">$${itemPrice}</div>
           </div>
-          <p class="food-desc">${item.description}</p>
+          <p class="food-desc">${item.description || ''}</p>
           <div class="food-card-footer">
             <div class="food-rating">
-              <i class="fa-solid fa-star"></i> ${item.rating.toFixed(1)}
+              <i class="fa-solid fa-star"></i> ${itemRating}
             </div>
             <button class="btn btn-gold btn-add-cart" data-id="${item.id}">
               <i class="fa-solid fa-plus"></i> Add to Order
