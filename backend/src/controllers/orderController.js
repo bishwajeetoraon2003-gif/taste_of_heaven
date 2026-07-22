@@ -4,13 +4,14 @@ const catchAsync = require('../utils/catchAsync');
 const sendEmail = require('../utils/email');
 
 exports.createOrder = catchAsync(async (req, res, next) => {
-  const { customerName, customerEmail, customerPhone, items, orderType } = req.body;
+  const { customerName, customerEmail, customerPhone, items, orderType, paymentMethod } = req.body;
 
   if (!items || !items.length) {
     return next(new AppError('Order must contain at least one item', 400));
   }
 
   const refCode = `#ORD-${Math.floor(10000 + Math.random() * 90000)}`;
+  const payMethod = paymentMethod || 'Cash on Delivery (COD)';
 
   let subtotal = 0;
   const processedItems = items.map(item => {
@@ -33,6 +34,7 @@ exports.createOrder = catchAsync(async (req, res, next) => {
     customer_email: customerEmail,
     customer_phone: customerPhone || 'N/A',
     order_type: orderType || 'delivery',
+    payment_method: payMethod,
     subtotal,
     tax_and_service: taxAndService,
     total,
@@ -68,6 +70,7 @@ exports.createOrder = catchAsync(async (req, res, next) => {
     customerEmail,
     customerPhone: customerPhone || 'N/A',
     orderType: orderType || 'delivery',
+    paymentMethod: payMethod,
     items: processedItems,
     subtotal,
     taxAndService,

@@ -844,22 +844,36 @@
       <!-- Cart items rendered via JS -->
     </div>
 
-    <div class="cart-footer">
-      <div class="cart-summary-row">
-        <span>Subtotal</span>
-        <span id="cart-subtotal">$0.00</span>
-      </div>
-      <div class="cart-summary-row">
-        <span>Tax & Sommelier Service (10%)</span>
-        <span id="cart-tax">$0.00</span>
-      </div>
-      <div class="cart-summary-row total">
-        <span>Total</span>
-        <span id="cart-total">$0.00</span>
+      <!-- Payment Option Selection -->
+      <div class="payment-method-selector" style="margin-top: 1rem; text-align: left;">
+        <label class="form-label" style="font-size: 0.78rem; margin-bottom: 0.5rem; display: block; color: var(--accent-gold);">
+          <i class="fa-solid fa-wallet"></i> Select Payment Method
+        </label>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+          <label class="payment-option-card selected" id="opt-cod">
+            <input type="radio" name="paymentMethod" value="COD" checked style="display: none;">
+            <i class="fa-solid fa-money-bill-wave text-gold"></i>
+            <span>Cash on Delivery</span>
+          </label>
+          <label class="payment-option-card" id="opt-online">
+            <input type="radio" name="paymentMethod" value="Online" style="display: none;">
+            <i class="fa-solid fa-credit-card text-gold"></i>
+            <span>Pay Online</span>
+          </label>
+        </div>
+
+        <!-- Online Payment Sub-Options -->
+        <div id="online-payment-details" style="display: none; margin-top: 0.75rem;">
+          <select id="online-pay-type" class="form-control" style="font-size: 0.82rem; padding: 0.6rem;">
+            <option value="UPI (GPay / PhonePe)">UPI (GPay / PhonePe / Paytm)</option>
+            <option value="Credit / Debit Card">Credit / Debit Card</option>
+            <option value="Net Banking">Net Banking</option>
+          </select>
+        </div>
       </div>
 
       <button class="btn btn-gold" id="btn-checkout" style="width: 100%; margin-top: 1rem;">
-        <i class="fa-solid fa-credit-card"></i> Proceed to Checkout
+        <i class="fa-solid fa-shield-halved"></i> Complete & Place Order
       </button>
     </div>
   </div>

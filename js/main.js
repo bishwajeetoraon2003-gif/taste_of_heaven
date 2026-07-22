@@ -665,12 +665,38 @@ document.addEventListener('DOMContentLoaded', () => {
     showToast('Item removed from cart', 'info');
   };
 
+  // Payment Method Option Selector Handler
+  const optCod = document.getElementById('opt-cod');
+  const optOnline = document.getElementById('opt-online');
+  const onlineDetails = document.getElementById('online-payment-details');
+
+  optCod?.addEventListener('click', () => {
+    optCod.classList.add('selected');
+    optOnline.classList.remove('selected');
+    optCod.querySelector('input').checked = true;
+    if (onlineDetails) onlineDetails.style.display = 'none';
+  });
+
+  optOnline?.addEventListener('click', () => {
+    optOnline.classList.add('selected');
+    optCod.classList.remove('selected');
+    optOnline.querySelector('input').checked = true;
+    if (onlineDetails) onlineDetails.style.display = 'block';
+  });
+
   // Checkout simulation
   const btnCheckout = document.getElementById('btn-checkout');
   btnCheckout?.addEventListener('click', async () => {
     if (cart.length === 0) {
       showToast('Your order cart is empty!', 'error');
       return;
+    }
+
+    const isOnline = optOnline?.classList.contains('selected');
+    let payMethod = 'Cash on Delivery (COD)';
+    if (isOnline) {
+      const paySub = document.getElementById('online-pay-type')?.value || 'Online Payment';
+      payMethod = `Pay Online - ${paySub}`;
     }
 
     const subtotal = cart.reduce((acc, item) => acc + (item.price * item.qty), 0);
@@ -682,6 +708,7 @@ document.addEventListener('DOMContentLoaded', () => {
       customerEmail: 'guest@tasteofheaven.com',
       customerPhone: '+1 555 000 8888',
       orderType: 'delivery',
+      paymentMethod: payMethod,
       items: cart
     };
 
@@ -697,6 +724,7 @@ document.addEventListener('DOMContentLoaded', () => {
       customerEmail: 'guest@tasteofheaven.com',
       items: cart.map(i => `${i.qty}x ${i.title}`).join(', '),
       total: total.toFixed(2),
+      paymentMethod: payMethod,
       status: 'received',
       createdAt: new Date().toISOString()
     });
@@ -706,7 +734,7 @@ document.addEventListener('DOMContentLoaded', () => {
     localStorage.removeItem('taste_cart');
     updateCartUI();
     closeCart();
-    showToast('Order Placed Successfully! Your Chef is preparing your gourmet order 🍾', 'gold');
+    showToast(`Order Placed (${payMethod})! Your Chef is preparing your gourmet order 🍾`, 'gold');
   });
 
   /* --------------------------------------------------------------------------

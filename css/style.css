@@ -2090,6 +2090,30 @@ select:-webkit-autofill:focus {
   to { opacity: 0; transform: translateY(10px); visibility: hidden; }
 }
 
+/* Payment Option Selector Cards */
+.payment-option-card {
+  padding: 0.75rem 0.5rem;
+  border-radius: var(--radius-sm);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-gold-subtle);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.78rem;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-align: center;
+}
+
+.payment-option-card:hover,
+.payment-option-card.selected {
+  border-color: var(--accent-gold) !important;
+  background: rgba(212, 175, 55, 0.15) !important;
+  box-shadow: 0 0 10px var(--accent-gold-glow);
+}
+
 /* --------------------------------------------------------------------------
    16. ADVANCED RESPONSIVE BREAKPOINTS (DESKTOP, TABLET, MOBILE)
    -------------------------------------------------------------------------- */
@@ -2145,7 +2169,14 @@ select:-webkit-autofill:focus {
     display: flex !important;
   }
   .navbar {
-    padding: 0 1.25rem;
+    padding: 0 1rem;
+    height: 70px;
+  }
+  .nav-actions {
+    gap: 0.4rem;
+  }
+  .nav-logo-text {
+    font-size: 0.85rem;
   }
   
   .hero-floating-cards {
@@ -2225,29 +2256,52 @@ select:-webkit-autofill:focus {
 /* Smart Phones (480px and down) */
 @media (max-width: 480px) {
   .container {
-    padding-left: 1rem;
-    padding-right: 1rem;
+    padding-left: 0.85rem;
+    padding-right: 0.85rem;
   }
 
   .hero {
-    padding: 7rem 0 4rem 0;
+    padding: 6.5rem 0 3.5rem 0;
     min-height: auto;
   }
 
   .hero-title {
-    font-size: clamp(2rem, 9vw, 3rem);
+    font-size: clamp(1.8rem, 8.5vw, 2.8rem);
   }
 
   .hero-buttons {
     flex-direction: column;
     width: 100%;
-    gap: 0.85rem;
+    gap: 0.75rem;
   }
 
   .hero-buttons .btn {
     width: 100%;
     justify-content: center;
-    padding: 0.85rem 1.25rem;
+    padding: 0.75rem 1rem;
+    font-size: 0.82rem;
+    box-sizing: border-box;
+  }
+
+  .btn {
+    max-width: 100%;
+    box-sizing: border-box;
+    white-space: normal;
+    text-align: center;
+  }
+
+  .nav-logo-text span {
+    display: inline;
+  }
+  .nav-logo-icon {
+    width: 32px;
+    height: 32px;
+    font-size: 0.85rem;
+  }
+  .nav-icon-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 0.8rem;
   }
 
   .stats-grid {
@@ -2275,8 +2329,8 @@ select:-webkit-autofill:focus {
 
   .filter-btn {
     flex-shrink: 0;
-    padding: 0.5rem 1rem;
-    font-size: 0.8rem;
+    padding: 0.45rem 0.85rem;
+    font-size: 0.78rem;
   }
 
   .menu-search-input-group {
@@ -2291,10 +2345,10 @@ select:-webkit-autofill:focus {
 
   .reservation-form-card,
   .floorplan-card {
-    padding: 1.5rem 1.25rem;
+    padding: 1.25rem 1rem;
   }
 
   .map-container {
-    height: 280px;
+    height: 260px;
   }
 }
