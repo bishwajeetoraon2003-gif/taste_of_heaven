@@ -2,17 +2,24 @@
    TASTE OF HEAVEN - FRONTEND BACKEND API CONNECTOR
    ========================================================================== */
 
-const API_BASE_URL = (typeof window !== 'undefined' && window.location.origin && window.location.origin !== 'null' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1')
-  ? `${window.location.origin}/api/v1`
-  : 'http://localhost:5000/api/v1';
+const isLocalEnv = typeof window !== 'undefined' && (
+  !window.location.hostname ||
+  window.location.hostname === 'localhost' ||
+  window.location.hostname === '127.0.0.1' ||
+  window.location.protocol === 'file:'
+);
+
+const API_BASE_URL = isLocalEnv
+  ? 'http://localhost:5000/api/v1'
+  : `${window.location.origin}/api/v1`;
 
 window.TasteAPI = {
   // Check backend health
   async checkHealth() {
     try {
-      const healthUrl = (typeof window !== 'undefined' && window.location.origin && window.location.origin !== 'null' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1')
-        ? `${window.location.origin}/health`
-        : 'http://localhost:5000/health';
+      const healthUrl = isLocalEnv
+        ? 'http://localhost:5000/health'
+        : `${window.location.origin}/health`;
       const res = await fetch(healthUrl);
       return await res.json();
     } catch (e) {
