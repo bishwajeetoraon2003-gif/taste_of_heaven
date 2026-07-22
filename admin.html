@@ -679,12 +679,14 @@
             }
             const totalVal = parseFloat(o.total || 0).toFixed(2);
             const payVal = o.paymentMethod || o.payment_method || 'Cash on Delivery (COD)';
+            const payStatus = o.paymentStatus || o.payment_status || 'COD';
+            const payId = o.razorpayPaymentId || o.razorpay_payment_id || o.transactionId || o.transaction_id || '';
             return `
               <tr>
                 <td class="text-gold" style="font-weight: 600;">${o.referenceCode || o.reference_code || '#ORD-00000'}</td>
                 <td>${o.customerName || o.customer_name || 'Valued Guest'}<br><small style="color: var(--text-muted);">${o.customerEmail || o.customer_email || ''}</small><br><small style="color: var(--accent-gold);">${o.customerPhone || o.customer_phone || ''}</small></td>
                 <td>${itemsTxt || 'Gourmet Selection'}<br><small style="color: var(--text-muted);">${o.deliveryAddress || o.delivery_address || ''}</small></td>
-                <td><span class="badge badge-gold" style="font-size: 0.75rem;">${payVal}</span></td>
+                <td><span class="badge badge-gold" style="font-size: 0.75rem;">${payVal}</span><br><small style="color: ${payStatus==='PAID'?'#10B981':'#F59E0B'}; font-weight: bold;">[${payStatus}]</small>${payId ? `<br><small style="font-family: monospace; font-size: 0.7rem;">ID: ${payId}</small>` : ''}</td>
                 <td>$${totalVal}</td>
                 <td><span class="status-badge confirmed">${(o.status || 'Received').toUpperCase()}</span></td>
               </tr>

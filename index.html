@@ -1232,6 +1232,20 @@
             <label style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); font-weight: 600; display: block; margin-bottom: 0.3rem;">Optional Delivery Notes (Gate Code, Special Instructions)</label>
             <textarea id="chk-notes" class="form-input" rows="2" placeholder="e.g. Ring concierge bell, leave with doorman..." style="font-size: 0.88rem; padding: 0.6rem; background: var(--bg-tertiary); color: var(--text-primary); border: 1px solid var(--border-gold-subtle); border-radius: var(--radius-sm); width: 100%; resize: none;"></textarea>
           </div>
+
+          <div>
+            <label style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--accent-gold); font-weight: 600; display: block; margin-bottom: 0.3rem;">Select Payment Method *</label>
+            <div class="payment-options">
+              <div class="payment-opt-card selected" id="chk-opt-cod">
+                <input type="radio" name="chk_pay_option" value="cod" checked style="display:none;">
+                <i class="fa-solid fa-money-bill-wave text-gold"></i> Cash on Delivery (COD)
+              </div>
+              <div class="payment-opt-card" id="chk-opt-online">
+                <input type="radio" name="chk_pay_option" value="online" style="display:none;">
+                <i class="fa-solid fa-credit-card text-gold"></i> Pay Online (Razorpay: UPI, Cards, NetBanking)
+              </div>
+            </div>
+          </div>
         </div>
 
         <div style="background: var(--bg-tertiary); padding: 1rem; border-radius: var(--radius-sm); border: 1px solid var(--border-glass); margin-bottom: 1.5rem;">
@@ -1282,7 +1296,8 @@
         <div style="margin-bottom: 0.3rem;"><strong style="color: var(--text-secondary);">Customer Name:</strong> <span id="ord-customer" style="color: var(--text-primary);">Guest</span></div>
         <div style="margin-bottom: 0.3rem;"><strong style="color: var(--text-secondary);">Phone Number:</strong> <span id="ord-phone" style="color: var(--text-primary);">-</span></div>
         <div style="margin-bottom: 0.3rem;"><strong style="color: var(--text-secondary);">Delivery Address:</strong> <span id="ord-address" style="color: var(--text-primary);">-</span></div>
-        <div><strong style="color: var(--text-secondary);">Payment Method:</strong> <span id="ord-payment" style="color: var(--text-primary);">Cash on Delivery</span></div>
+        <div style="margin-bottom: 0.3rem;"><strong style="color: var(--text-secondary);">Payment Method:</strong> <span id="ord-payment" style="color: var(--text-primary);">Cash on Delivery</span></div>
+        <div><strong style="color: var(--text-secondary);">Payment Status:</strong> <span id="ord-pay-status" class="badge badge-gold">COD</span></div>
       </div>
 
       <div style="margin-bottom: 1.5rem;">
@@ -1301,6 +1316,9 @@
       </div>
     </div>
   </div>
+
+  <!-- Razorpay Checkout SDK -->
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
   <!-- Backend API Integration & Supabase Verification Scripts -->
   <script src="js/api.js"></script>

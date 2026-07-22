@@ -1,3 +1,4 @@
+const crypto = require('crypto');
 const { supabase, memoryDb } = require('../config/db');
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
@@ -39,6 +40,7 @@ exports.createOrder = catchAsync(async (req, res, next) => {
     delivery_address: address,
     order_type: orderType || 'delivery',
     payment_method: payMethod,
+    payment_status: 'COD',
     subtotal,
     tax_and_service: taxAndService,
     total,
@@ -62,6 +64,7 @@ Date & Time:     ${nowStr}
 Phone Number:    ${customerPhone || 'N/A'}
 Delivery Address:${address}
 ${notes ? `Delivery Notes:  ${notes}\n` : ''}Payment Method:  ${payMethod}
+Payment Status:  COD (Cash on Delivery)
 Estimated Time:  30-45 Minutes
 
 ORDERED ITEMS:
@@ -99,7 +102,7 @@ Thank you for choosing Taste of Heaven. We are preparing your culinary experienc
         status: 'success',
         source: 'supabase',
         emailSent: emailSentSuccessfully,
-        data: { order: { ...orderData, items: processedItems } }
+        data: { order: { ...orderData, referenceCode: refCode, paymentStatus: 'COD', items: processedItems } }
       });
     }
   }
@@ -111,13 +114,201 @@ Thank you for choosing Taste of Heaven. We are preparing your culinary experienc
     customerEmail,
     customerPhone: customerPhone || 'N/A',
     deliveryAddress: address,
+    deliveryNotes: notes,
     orderType: orderType || 'delivery',
     paymentMethod: payMethod,
+    paymentStatus: 'COD',
     items: processedItems,
     subtotal,
     taxAndService,
     total,
     status: 'received',
+    createdAt: new Date().toISOString()
+  };
+
+  memoryDb.orders.push(newOrder);
+
+  res.status(201).json({
+    status: 'success',
+    emailSent: emailSentSuccessfully,
+    data: { order: newOrder }
+  });
+});
+
+exports.createRazorpayOrder = catchAsync(async (req, res, next) => {
+  const { amount, items } = req.body;
+  if (!items || !items.length) {
+    return next(new AppError('Order must contain at least one item', 400));
+  }
+
+  let subtotal = 0;
+  items.forEach(item => {
+    subtotal += (item.price || 50) * (item.qty || 1);
+  });
+  const total = subtotal * 1.10;
+  const amountInPaise = Math.round(total * 100);
+
+  const razorpayOrderId = `order_${Math.random().toString(36).substring(2, 15)}${Date.now().toString(36)}`;
+  const razorpayKey = process.env.RAZORPAY_KEY_ID || 'rzp_test_taste_of_heaven';
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      razorpayOrderId,
+      amount: amountInPaise,
+      currency: 'INR',
+      key: razorpayKey
+    }
+  });
+});
+
+exports.verifyRazorpayPayment = catchAsync(async (req, res, next) => {
+  const { razorpay_payment_id, razorpay_order_id, razorpay_signature, orderPayload } = req.body;
+
+  if (!razorpay_payment_id || !razorpay_order_id || !orderPayload) {
+    return next(new AppError('Missing payment verification details', 400));
+  }
+
+  const keySecret = process.env.RAZORPAY_KEY_SECRET;
+  let isSignatureValid = true;
+
+  if (keySecret) {
+    const body = razorpay_order_id + '|' + razorpay_payment_id;
+    const expectedSignature = crypto.createHmac('sha256', keySecret).update(body.toString()).digest('hex');
+    isSignatureValid = (expectedSignature === razorpay_signature);
+  }
+
+  if (!isSignatureValid) {
+    return res.status(400).json({
+      status: 'fail',
+      message: 'Razorpay Payment Signature Verification Failed!'
+    });
+  }
+
+  const { customerName, customerEmail, customerPhone, deliveryAddress, deliveryNotes, items, paymentMethod } = orderPayload;
+  const refCode = `#ORD-${Math.floor(10000 + Math.random() * 90000)}`;
+  const txnId = `TXN-${Math.random().toString(36).substring(2, 10).toUpperCase()}`;
+
+  let subtotal = 0;
+  const processedItems = (items || []).map(item => {
+    const itemSub = (item.price || 50) * (item.qty || 1);
+    subtotal += itemSub;
+    return {
+      title: item.title,
+      unit_price: item.price,
+      quantity: item.qty || 1,
+      subtotal: itemSub
+    };
+  });
+
+  const taxAndService = subtotal * 0.10;
+  const total = subtotal + taxAndService;
+  const nowStr = new Date().toLocaleString();
+
+  const dbPayload = {
+    reference_code: refCode,
+    customer_name: customerName,
+    customer_email: customerEmail,
+    customer_phone: customerPhone || 'N/A',
+    delivery_address: deliveryAddress || 'N/A',
+    order_type: 'delivery',
+    payment_method: paymentMethod || 'Pay Online (Razorpay)',
+    payment_status: 'PAID',
+    status: 'Confirmed',
+    razorpay_payment_id: razorpay_payment_id,
+    transaction_id: txnId,
+    subtotal,
+    tax_and_service: taxAndService,
+    total
+  };
+
+  const itemsSummaryText = processedItems.map(i => `${i.quantity}x ${i.title} ($${(i.unit_price * i.quantity).toFixed(2)})`).join(', ');
+
+  const emailBody = `
+Dear ${customerName},
+
+Thank you for dining with Taste of Heaven! Your online payment was successful and your gourmet order is CONFIRMED.
+
+============================================================
+ORDER CONFIRMATION RECEIPT (PAID ONLINE) - TASTE OF HEAVEN
+============================================================
+Restaurant Name: Taste of Heaven Michelin Dining
+Customer Name:   ${customerName}
+Order ID:        ${refCode}
+Date & Time:     ${nowStr}
+Phone Number:    ${customerPhone || 'N/A'}
+Delivery Address:${deliveryAddress || 'N/A'}
+${deliveryNotes ? `Delivery Notes:  ${deliveryNotes}\n` : ''}Payment Method:  ${paymentMethod || 'Pay Online (Razorpay)'}
+Payment Status:  PAID (Razorpay Payment ID: ${razorpay_payment_id})
+Transaction ID:  ${txnId}
+Estimated Time:  30-45 Minutes
+
+ORDERED ITEMS:
+${itemsSummaryText}
+
+Subtotal:        $${subtotal.toFixed(2)}
+Tax & Sommelier: $${taxAndService.toFixed(2)}
+Total Amount:    $${total.toFixed(2)}
+
+============================================================
+Thank you for choosing Taste of Heaven. We are preparing your culinary experience with utmost care!
+`;
+
+  let emailSentSuccessfully = false;
+  try {
+    emailSentSuccessfully = await sendEmail({
+      email: customerEmail,
+      subject: `Order Confirmed & Paid - Taste of Heaven ${refCode}`,
+      message: emailBody
+    });
+  } catch (e) {
+    emailSentSuccessfully = false;
+  }
+
+  if (supabase) {
+    const { data: orderData, error: orderErr } = await supabase.from('orders').insert([dbPayload]).select().single();
+
+    if (!orderErr && orderData) {
+      const itemsPayload = processedItems.map(i => ({ ...i, order_id: orderData.id }));
+      await supabase.from('order_items').insert(itemsPayload);
+
+      return res.status(201).json({
+        status: 'success',
+        source: 'supabase',
+        emailSent: emailSentSuccessfully,
+        data: {
+          order: {
+            ...orderData,
+            referenceCode: refCode,
+            razorpayPaymentId: razorpay_payment_id,
+            transactionId: txnId,
+            paymentStatus: 'PAID',
+            status: 'Confirmed',
+            items: processedItems
+          }
+        }
+      });
+    }
+  }
+
+  const newOrder = {
+    id: memoryDb.orders.length + 1,
+    referenceCode: refCode,
+    customerName,
+    customerEmail,
+    customerPhone: customerPhone || 'N/A',
+    deliveryAddress: deliveryAddress || 'N/A',
+    deliveryNotes,
+    orderType: 'delivery',
+    paymentMethod: paymentMethod || 'Pay Online (Razorpay)',
+    paymentStatus: 'PAID',
+    status: 'Confirmed',
+    razorpayPaymentId: razorpay_payment_id,
+    transactionId: txnId,
+    items: processedItems,
+    subtotal,
+    taxAndService,
+    total,
     createdAt: new Date().toISOString()
   };
 

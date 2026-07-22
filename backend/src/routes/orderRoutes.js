@@ -6,6 +6,8 @@ const validate = require('../middlewares/validateMiddleware');
 const { createOrderRules } = require('../validators/orderValidator');
 
 router.post('/', createOrderRules, validate, orderController.createOrder);
+router.post('/create-razorpay-order', orderController.createRazorpayOrder);
+router.post('/verify-razorpay-payment', orderController.verifyRazorpayPayment);
 
 // Protected Admin / Staff routes
 router.use(protect, restrictTo('admin', 'staff'));

@@ -58,7 +58,7 @@ window.TasteAPI = {
     }
   },
 
-  // Submit Order to Backend API
+  // Submit Order to Backend API (COD)
   async createOrder(orderData) {
     try {
       const res = await fetch(`${API_BASE_URL}/orders`, {
@@ -69,6 +69,34 @@ window.TasteAPI = {
       return await res.json();
     } catch (e) {
       console.warn('Backend offline. Processed locally.');
+      return null;
+    }
+  },
+
+  // Create Razorpay Order ID for Online Payment
+  async createRazorpayOrder(items) {
+    try {
+      const res = await fetch(`${API_BASE_URL}/orders/create-razorpay-order`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ items })
+      });
+      return await res.json();
+    } catch (e) {
+      return null;
+    }
+  },
+
+  // Verify Razorpay Payment Signature & Create Order
+  async verifyRazorpayPayment(paymentData) {
+    try {
+      const res = await fetch(`${API_BASE_URL}/orders/verify-razorpay-payment`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(paymentData)
+      });
+      return await res.json();
+    } catch (e) {
       return null;
     }
   },

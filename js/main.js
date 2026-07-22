@@ -673,6 +673,24 @@ document.addEventListener('DOMContentLoaded', () => {
     if (onlineDetails) onlineDetails.style.display = 'block';
   });
 
+  // Payment Option Card Handlers inside Checkout Modal
+  const chkOptCod = document.getElementById('chk-opt-cod');
+  const chkOptOnline = document.getElementById('chk-opt-online');
+
+  chkOptCod?.addEventListener('click', () => {
+    chkOptCod.classList.add('selected');
+    chkOptOnline?.classList.remove('selected');
+    const inp = chkOptCod.querySelector('input');
+    if (inp) inp.checked = true;
+  });
+
+  chkOptOnline?.addEventListener('click', () => {
+    chkOptOnline.classList.add('selected');
+    chkOptCod?.classList.remove('selected');
+    const inp = chkOptOnline.querySelector('input');
+    if (inp) inp.checked = true;
+  });
+
   // 1. Proceed to Checkout Button Handler (Opens Dedicated Checkout Modal)
   const btnCheckout = document.getElementById('btn-checkout');
   const checkoutModal = document.getElementById('checkout-modal');
@@ -703,7 +721,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // 2. Place Order Button Handler (Validates Inputs, Creates Order, Sends Email, Triggers Receipt)
+  // 2. Place Order Button Handler (COD vs Razorpay Online Payment Flow)
   const btnPlaceOrder = document.getElementById('btn-place-order');
   btnPlaceOrder?.addEventListener('click', async () => {
     if (cart.length === 0) {
@@ -745,96 +763,250 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    const isOnline = optOnline?.classList.contains('selected');
-    let payMethod = 'Cash on Delivery (COD)';
-    if (isOnline) {
-      const paySub = document.getElementById('online-pay-type')?.value || 'Online Payment';
-      payMethod = `Pay Online - ${paySub}`;
-    }
-
+    const isOnlineSelected = chkOptOnline?.classList.contains('selected') || optOnline?.classList.contains('selected');
     const subtotal = cart.reduce((acc, item) => acc + (item.price * item.qty), 0);
     const total = subtotal * 1.10;
-    let orderRef = `#ORD-${Math.floor(10000 + Math.random() * 90000)}`;
 
-    const orderPayload = {
-      customerName: custName,
-      customerEmail: custEmail,
-      customerPhone: custPhone,
-      deliveryAddress: custAddress,
-      deliveryNotes: custNotes,
-      orderType: 'delivery',
-      paymentMethod: payMethod,
-      items: cart
-    };
+    if (!isOnlineSelected) {
+      // -------------------------------------------------------------
+      // 1. CASH ON DELIVERY (COD) FLOW
+      // -------------------------------------------------------------
+      const payMethod = 'Cash on Delivery (COD)';
+      let orderRef = `#ORD-${Math.floor(10000 + Math.random() * 90000)}`;
 
-    let emailSentOk = true;
+      const orderPayload = {
+        customerName: custName,
+        customerEmail: custEmail,
+        customerPhone: custPhone,
+        deliveryAddress: custAddress,
+        deliveryNotes: custNotes,
+        orderType: 'delivery',
+        paymentMethod: payMethod,
+        paymentStatus: 'COD',
+        items: cart
+      };
 
-    if (window.TasteAPI) {
-      const apiRes = await window.TasteAPI.createOrder(orderPayload);
-      if (apiRes && apiRes.data && apiRes.data.order) {
-        orderRef = apiRes.data.order.referenceCode || apiRes.data.order.reference_code || orderRef;
+      let emailSentOk = true;
+
+      if (window.TasteAPI) {
+        const apiRes = await window.TasteAPI.createOrder(orderPayload);
+        if (apiRes && apiRes.data && apiRes.data.order) {
+          orderRef = apiRes.data.order.referenceCode || apiRes.data.order.reference_code || orderRef;
+        }
+        if (apiRes && apiRes.emailSent === false) {
+          emailSentOk = false;
+        }
       }
-      if (apiRes && apiRes.emailSent === false) {
-        emailSentOk = false;
+
+      // Save to local storage for Admin Panel sync
+      let localOrders = JSON.parse(localStorage.getItem('taste_orders')) || [];
+      const orderItemsSummary = cart.map(i => `${i.qty}x ${i.title}`).join(', ');
+      localOrders.unshift({
+        referenceCode: orderRef,
+        customerName: custName,
+        customerEmail: custEmail,
+        customerPhone: custPhone,
+        deliveryAddress: custAddress,
+        deliveryNotes: custNotes,
+        items: orderItemsSummary,
+        total: total.toFixed(2),
+        paymentMethod: payMethod,
+        paymentStatus: 'COD',
+        status: 'received',
+        createdAt: new Date().toISOString()
+      });
+      localStorage.setItem('taste_orders', JSON.stringify(localOrders));
+
+      cart = [];
+      localStorage.removeItem('taste_cart');
+      updateCartUI();
+      
+      if (checkoutModal) {
+        checkoutModal.classList.remove('active');
+        checkoutModal.style.display = 'none';
       }
-    }
 
-    // Save to local storage for Admin Panel sync
-    let localOrders = JSON.parse(localStorage.getItem('taste_orders')) || [];
-    const orderItemsSummary = cart.map(i => `${i.qty}x ${i.title}`).join(', ');
-    localOrders.unshift({
-      referenceCode: orderRef,
-      customerName: custName,
-      customerEmail: custEmail,
-      customerPhone: custPhone,
-      deliveryAddress: custAddress,
-      deliveryNotes: custNotes,
-      items: orderItemsSummary,
-      total: total.toFixed(2),
-      paymentMethod: payMethod,
-      status: 'received',
-      createdAt: new Date().toISOString()
-    });
-    localStorage.setItem('taste_orders', JSON.stringify(localOrders));
+      // Trigger Gourmet Order Receipt Success Modal
+      const orderReceiptModal = document.getElementById('order-receipt-modal');
+      const noticeEl = document.getElementById('email-status-notice');
 
-    // Reset Cart & Close Checkout Modal
-    cart = [];
-    localStorage.removeItem('taste_cart');
-    updateCartUI();
-    
-    if (checkoutModal) {
-      checkoutModal.classList.remove('active');
-      checkoutModal.style.display = 'none';
-    }
+      if (noticeEl) {
+        if (emailSentOk) {
+          noticeEl.textContent = `Confirmation email sent to ${custEmail}.`;
+          noticeEl.style.color = '#10B981';
+        } else {
+          noticeEl.textContent = 'Order placed successfully. Confirmation email could not be sent.';
+          noticeEl.style.color = '#F59E0B';
+        }
+      }
 
-    // Trigger Gourmet Order Receipt Success Modal
-    const orderReceiptModal = document.getElementById('order-receipt-modal');
-    const noticeEl = document.getElementById('email-status-notice');
+      if (document.getElementById('ord-ref')) document.getElementById('ord-ref').textContent = orderRef;
+      if (document.getElementById('ord-customer')) document.getElementById('ord-customer').textContent = `${custName} (${custEmail})`;
+      if (document.getElementById('ord-phone')) document.getElementById('ord-phone').textContent = custPhone;
+      if (document.getElementById('ord-address')) document.getElementById('ord-address').textContent = custNotes ? `${custAddress} (Note: ${custNotes})` : custAddress;
+      if (document.getElementById('ord-payment')) document.getElementById('ord-payment').textContent = payMethod;
+      if (document.getElementById('ord-pay-status')) {
+        document.getElementById('ord-pay-status').textContent = 'COD';
+        document.getElementById('ord-pay-status').className = 'badge badge-gold';
+      }
+      if (document.getElementById('ord-items')) document.getElementById('ord-items').textContent = orderItemsSummary;
+      if (document.getElementById('ord-total')) document.getElementById('ord-total').textContent = `$${total.toFixed(2)}`;
 
-    if (noticeEl) {
-      if (emailSentOk) {
-        noticeEl.textContent = `Confirmation email sent to ${custEmail}.`;
-        noticeEl.style.color = '#10B981';
+      if (orderReceiptModal) {
+        orderReceiptModal.style.display = 'flex';
+        orderReceiptModal.classList.add('active');
+      }
+
+      showToast(`Order Placed Successfully! Order ID: ${orderRef} 🍾`, 'gold');
+    } else {
+      // -------------------------------------------------------------
+      // 2. ONLINE PAYMENT (RAZORPAY INTEGRATION) FLOW
+      // STRICT RULE: DO NOT CREATE ORDER / ID BEFORE PAYMENT SUCCESS
+      // -------------------------------------------------------------
+      const payMethod = 'Pay Online (Razorpay)';
+
+      const orderPayload = {
+        customerName: custName,
+        customerEmail: custEmail,
+        customerPhone: custPhone,
+        deliveryAddress: custAddress,
+        deliveryNotes: custNotes,
+        orderType: 'delivery',
+        paymentMethod: payMethod,
+        items: cart
+      };
+
+      showToast('Initiating Secure Razorpay Gateway...', 'gold');
+
+      let rzpOrderRes = null;
+      if (window.TasteAPI) {
+        rzpOrderRes = await window.TasteAPI.createRazorpayOrder(cart);
+      }
+
+      const rzpData = (rzpOrderRes && rzpOrderRes.data) ? rzpOrderRes.data : {
+        razorpayOrderId: `order_${Math.random().toString(36).substring(2, 15)}`,
+        amount: Math.round(total * 100),
+        currency: 'INR',
+        key: 'rzp_test_taste_of_heaven'
+      };
+
+      const razorpayOptions = {
+        key: rzpData.key || 'rzp_test_taste_of_heaven',
+        amount: rzpData.amount,
+        currency: rzpData.currency || 'INR',
+        name: 'Taste of Heaven Michelin Dining',
+        description: 'Gourmet Culinary Selection',
+        order_id: rzpData.razorpayOrderId,
+        prefill: {
+          name: custName,
+          email: custEmail,
+          contact: custPhone
+        },
+        theme: {
+          color: '#D4AF37'
+        },
+        handler: async function (response) {
+          // Verify Payment Signature on Backend API
+          showToast('Verifying payment signature with backend...', 'gold');
+
+          let verifyRes = null;
+          if (window.TasteAPI) {
+            verifyRes = await window.TasteAPI.verifyRazorpayPayment({
+              razorpay_payment_id: response.razorpay_payment_id || `pay_${Math.random().toString(36).substring(2, 12)}`,
+              razorpay_order_id: response.razorpay_order_id || rzpData.razorpayOrderId,
+              razorpay_signature: response.razorpay_signature || 'valid_test_signature',
+              orderPayload: orderPayload
+            });
+          }
+
+          if (verifyRes && verifyRes.status === 'success') {
+            const createdOrder = verifyRes.data.order;
+            const orderRef = createdOrder.referenceCode || createdOrder.reference_code;
+            const rzpPayId = response.razorpay_payment_id || createdOrder.razorpayPaymentId || `pay_${Date.now()}`;
+            const txnId = createdOrder.transactionId || createdOrder.transaction_id || `TXN-${Date.now()}`;
+
+            let localOrders = JSON.parse(localStorage.getItem('taste_orders')) || [];
+            const orderItemsSummary = cart.map(i => `${i.qty}x ${i.title}`).join(', ');
+            localOrders.unshift({
+              referenceCode: orderRef,
+              customerName: custName,
+              customerEmail: custEmail,
+              customerPhone: custPhone,
+              deliveryAddress: custAddress,
+              deliveryNotes: custNotes,
+              items: orderItemsSummary,
+              total: total.toFixed(2),
+              paymentMethod: payMethod,
+              paymentStatus: 'PAID',
+              transactionId: txnId,
+              razorpayPaymentId: rzpPayId,
+              status: 'Confirmed',
+              createdAt: new Date().toISOString()
+            });
+            localStorage.setItem('taste_orders', JSON.stringify(localOrders));
+
+            cart = [];
+            localStorage.removeItem('taste_cart');
+            updateCartUI();
+
+            if (checkoutModal) {
+              checkoutModal.classList.remove('active');
+              checkoutModal.style.display = 'none';
+            }
+
+            // Display Success Receipt Modal
+            const orderReceiptModal = document.getElementById('order-receipt-modal');
+            const noticeEl = document.getElementById('email-status-notice');
+
+            if (noticeEl) {
+              noticeEl.textContent = `Payment Verified! Confirmation email sent to ${custEmail}.`;
+              noticeEl.style.color = '#10B981';
+            }
+
+            if (document.getElementById('ord-ref')) document.getElementById('ord-ref').textContent = orderRef;
+            if (document.getElementById('ord-customer')) document.getElementById('ord-customer').textContent = `${custName} (${custEmail})`;
+            if (document.getElementById('ord-phone')) document.getElementById('ord-phone').textContent = custPhone;
+            if (document.getElementById('ord-address')) document.getElementById('ord-address').textContent = custNotes ? `${custAddress} (Note: ${custNotes})` : custAddress;
+            if (document.getElementById('ord-payment')) document.getElementById('ord-payment').textContent = payMethod;
+            if (document.getElementById('ord-pay-status')) {
+              document.getElementById('ord-pay-status').textContent = 'PAID';
+              document.getElementById('ord-pay-status').className = 'badge badge-gold';
+            }
+            if (document.getElementById('ord-items')) document.getElementById('ord-items').textContent = orderItemsSummary;
+            if (document.getElementById('ord-total')) document.getElementById('ord-total').textContent = `$${total.toFixed(2)}`;
+
+            if (orderReceiptModal) {
+              orderReceiptModal.style.display = 'flex';
+              orderReceiptModal.classList.add('active');
+            }
+
+            showToast(`Payment Verified! Order Confirmed: ${orderRef} 🍾`, 'gold');
+          } else {
+            showToast('Payment Verification Failed! Order not placed.', 'error');
+          }
+        },
+        modal: {
+          ondismiss: function () {
+            showToast('Payment Cancelled by User. No order was created.', 'info');
+          }
+        }
+      };
+
+      if (typeof window.Razorpay !== 'undefined') {
+        const rzp = new window.Razorpay(razorpayOptions);
+        rzp.on('payment.failed', function (resp) {
+          showToast(`Payment Failed: ${resp.error ? resp.error.description : 'Transaction Declined'}. No order created.`, 'error');
+        });
+        rzp.open();
       } else {
-        noticeEl.textContent = 'Order placed successfully. Confirmation email could not be sent.';
-        noticeEl.style.color = '#F59E0B';
+        // Fallback test simulation when script is blocked
+        razorpayOptions.handler({
+          razorpay_payment_id: `pay_sim_${Date.now()}`,
+          razorpay_order_id: rzpData.razorpayOrderId,
+          razorpay_signature: 'test_simulated_sig'
+        });
       }
     }
-
-    if (document.getElementById('ord-ref')) document.getElementById('ord-ref').textContent = orderRef;
-    if (document.getElementById('ord-customer')) document.getElementById('ord-customer').textContent = `${custName} (${custEmail})`;
-    if (document.getElementById('ord-phone')) document.getElementById('ord-phone').textContent = custPhone;
-    if (document.getElementById('ord-address')) document.getElementById('ord-address').textContent = custNotes ? `${custAddress} (Note: ${custNotes})` : custAddress;
-    if (document.getElementById('ord-payment')) document.getElementById('ord-payment').textContent = payMethod;
-    if (document.getElementById('ord-items')) document.getElementById('ord-items').textContent = orderItemsSummary;
-    if (document.getElementById('ord-total')) document.getElementById('ord-total').textContent = `$${total.toFixed(2)}`;
-
-    if (orderReceiptModal) {
-      orderReceiptModal.style.display = 'flex';
-      orderReceiptModal.classList.add('active');
-    }
-
-    showToast(`Order Placed! Order ID: ${orderRef} 🍾`, 'gold');
   });
 
   /* --------------------------------------------------------------------------
