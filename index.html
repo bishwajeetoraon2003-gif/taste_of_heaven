@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Taste of Heaven | Michelin-Starred Fine Dining & Luxury Restaurant</title>
+  
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="Experience celestial gastronomy at Taste of Heaven. Award-winning fine dining restaurant offering luxury ambiance, Michelin-starred cuisine, online reservations, and gourmet food delivery.">
+  <meta name="keywords" content="Taste of Heaven, luxury restaurant, fine dining, Michelin star, table reservation, gourmet menu, private dining, executive chef">
+  <meta name="author" content="Taste of Heaven Culinary Group">
+  <meta name="robots" content="index, follow">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Taste of Heaven | Luxury Fine Dining Restaurant">
+  <meta property="og:description" content="Immerse your senses in celestial culinary artistry. Reserve your private dining table or order gourmet dishes online today.">
+  <meta property="og:url" content="https://tasteofheaven-luxury.com">
+  <meta property="og:image" content="https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1200&q=80">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Taste of Heaven | Fine Dining & Luxury Gastronomy">
+  <meta name="twitter:description" content="Discover celestial flavors, executive chef creations, and effortless table reservations at Taste of Heaven.">
+  <meta name="twitter:image" content="https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1200&q=80">
+
+  <!-- Schema.org Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Restaurant",
+    "name": "Taste of Heaven",
+    "image": "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1200&q=80",
+    "priceRange": "$$$$",
+    "servesCuisine": ["French", "Contemporary European", "Molecular Gastronomy"],
+    "starRating": {
+      "@type": "Rating",
+      "ratingValue": "4.9",
+      "bestRating": "5"
+    },
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "777 Grand Celestial Avenue, Suite 100",
+      "addressLocality": "Metropolis",
+      "addressRegion": "NY",
+      "postalCode": "10001",
+      "addressCountry": "US"
+    },
+    "telephone": "+1 (555) 888-9999",
+    "openingHoursSpecification": [
+      {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": ["Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+        "opens": "17:00",
+        "closes": "23:30"
+      }
+    ]
+  }
+  </script>
+
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Accessibility Skip Link -->
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <!-- Custom Cursor Elements -->
+  <div class="custom-cursor-dot" id="cursor-dot"></div>
+  <div class="custom-cursor-ring" id="cursor-ring"></div>
+
+  <!-- Page Preloader Screen -->
+  <div id="preloader">
+    <div class="preloader-logo">
+      <i class="fa-solid fa-crown text-gold"></i> TASTE OF HEAVEN
+    </div>
+    <div class="preloader-progress-bar">
+      <div class="preloader-progress-fill" id="preloader-fill"></div>
+    </div>
+    <div class="preloader-counter" id="preloader-text">PREPARING CELESTIAL EXPERIENCE 0%</div>
+  </div>
+
+  <!-- Ambient Gold Dust Canvas Particles -->
+  <canvas id="particle-canvas"></canvas>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- ==========================================================================
+       HEADER & NAVIGATION BAR
+       ========================================================================== -->
+  <header class="navbar" id="navbar">
+    <div class="container nav-container">
+      <a href="#home" class="nav-logo" aria-label="Taste of Heaven Home">
+        <div class="nav-logo-icon">
+          <i class="fa-solid fa-utensils"></i>
+        </div>
+        <div class="nav-logo-text">TASTE OF <span>HEAVEN</span></div>
+      </a>
+
+      <ul class="nav-menu" id="nav-menu">
+        <li><a href="#home" class="nav-link active">Home</a></li>
+        <li><a href="#about" class="nav-link">About</a></li>
+        <li><a href="#menu" class="nav-link">Menu</a></li>
+        <li><a href="#chefs" class="nav-link">Chefs</a></li>
+        <li><a href="#gallery" class="nav-link">Gallery</a></li>
+        <li><a href="#testimonials" class="nav-link">Reviews</a></li>
+        <li><a href="#reservation" class="nav-link">Reservation</a></li>
+        <li><a href="#contact" class="nav-link">Contact</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <!-- Live Status Clock -->
+        <div class="nav-status-pill" id="status-pill">
+          <span class="status-dot"></span>
+          <span id="live-clock">OPEN • 19:30 NY</span>
+        </div>
+
+        <!-- Ambient Music Toggle Button -->
+        <button class="nav-icon-btn" id="btn-audio-toggle" title="Toggle Ambient Lounge Sound" aria-label="Toggle Lounge Audio">
+          <i class="fa-solid fa-music"></i>
+        </button>
+
+        <!-- Theme Toggle Button -->
+        <button class="nav-icon-btn" id="btn-theme-toggle" title="Switch Theme (Dark/Light)" aria-label="Toggle Theme">
+          <i class="fa-solid fa-moon" id="theme-icon"></i>
+        </button>
+
+        <!-- Cart Drawer Button -->
+        <button class="nav-icon-btn" id="btn-cart-open" title="View Order Cart" aria-label="Open Cart">
+          <i class="fa-solid fa-bag-shopping"></i>
+          <span class="cart-badge" id="cart-count">0</span>
+        </button>
+
+        <!-- Book Table CTA -->
+        <a href="#reservation" class="btn btn-gold" style="padding: 0.6rem 1.4rem; font-size: 0.78rem;">
+          <i class="fa-regular fa-calendar-check"></i> Book Table
+        </a>
+
+        <!-- Mobile Menu Toggle Button -->
+        <button class="mobile-toggle" id="mobile-toggle" aria-label="Toggle Navigation Menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Navigation Drawer -->
+  <div class="mobile-menu" id="mobile-menu">
+    <ul class="mobile-nav-links">
+      <li><a href="#home" class="nav-link">Home</a></li>
+      <li><a href="#about" class="nav-link">About Us</a></li>
+      <li><a href="#menu" class="nav-link">Gourmet Menu</a></li>
+      <li><a href="#chefs" class="nav-link">Master Chefs</a></li>
+      <li><a href="#gallery" class="nav-link">Gallery</a></li>
+      <li><a href="#testimonials" class="nav-link">Testimonials</a></li>
+      <li><a href="#reservation" class="nav-link">Reserve Table</a></li>
+      <li><a href="#faq" class="nav-link">FAQ</a></li>
+      <li><a href="#contact" class="nav-link">Contact</a></li>
+    </ul>
+    <a href="#reservation" class="btn btn-gold"><i class="fa-solid fa-wine-glass"></i> Book A Table Now</a>
+  </div>
+
+  <main id="main-content">
+    <!-- ==========================================================================
+         HERO SECTION
+         ========================================================================== -->
+    <section class="hero" id="home">
+      <div class="hero-bg-overlay"></div>
+      <div class="container hero-content">
+        <div class="hero-subtitle">
+          <i class="fa-solid fa-star text-gold"></i> MICHELIN THREE-STAR EXPERIENCE <i class="fa-solid fa-star text-gold"></i>
+        </div>
+        <h1 class="hero-title">
+          Elevating Fine Dining to <span>Celestial Heights</span>
+        </h1>
+        <p class="hero-description">
+          Experience an extraordinary culinary symphony where rare ingredients, avant-garde techniques, and opulent glassmorphism ambiance ignite an unforgettable epicurean journey.
+        </p>
+
+        <div class="hero-buttons">
+          <a href="#reservation" class="btn btn-gold">
+            <i class="fa-solid fa-utensils"></i> Reserve Your Table
+          </a>
+          <a href="#menu" class="btn btn-outline-gold">
+            <i class="fa-solid fa-book-open"></i> Explore Menu
+          </a>
+          <button class="btn btn-glass" id="hero-order-btn">
+            <i class="fa-solid fa-truck-fast"></i> Order Online
+          </button>
+        </div>
+
+        <!-- Floating Highlights -->
+        <div class="hero-floating-cards">
+          <div class="hero-float-card">
+            <i class="fa-solid fa-award hero-float-icon"></i>
+            <div class="hero-float-text">3 Michelin Stars (2024–2026)</div>
+          </div>
+          <div class="hero-float-card">
+            <i class="fa-solid fa-seedling hero-float-icon"></i>
+            <div class="hero-float-text">100% Organic & Farm-Fresh</div>
+          </div>
+          <div class="hero-float-card">
+            <i class="fa-solid fa-heart-pulse hero-float-icon"></i>
+            <div class="hero-float-text">4.9/5★ Over 1,500 Diner Reviews</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scroll Indicator -->
+      <a href="#about" class="scroll-indicator" aria-label="Scroll to About Section">
+        <div class="mouse-icon">
+          <div class="mouse-wheel"></div>
+        </div>
+        <span>DISCOVER MORE</span>
+      </a>
+    </section>
+
+    <!-- ==========================================================================
+         ABOUT SECTION & INTERACTIVE TIMELINE
+         ========================================================================== -->
+    <section class="section-padding" id="about">
+      <div class="container">
+        <div class="about-grid">
+          <div class="about-image-wrapper">
+            <img src="https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?auto=format&fit=crop&w=800&q=80" alt="Taste of Heaven Dining Room" class="about-img-main" loading="lazy">
+            <div class="about-floating-badge">
+              <div class="badge-number" id="stat-years">14+</div>
+              <div class="badge-label">Years of Mastery</div>
+            </div>
+          </div>
+
+          <div class="about-content">
+            <div class="sub-title">OUR HERITAGE & MISSION</div>
+            <h2 class="main-title">A Sanctuary for Gastronomic Connoisseurs</h2>
+            <div class="gold-divider" style="justify-content: flex-start;">
+              <div class="line"></div><div class="diamond"></div><div class="line"></div>
+            </div>
+            <p class="about-text">
+              Founded in 2012 by Master Chef Antoine Laurent, <strong>Taste of Heaven</strong> was born from a visionary dream: to bridge ancient culinary traditions with modern molecular alchemy in a luxurious setting.
+            </p>
+            <p class="about-text">
+              Every dish served is a meticulously crafted work of art, combining rare wild-harvested botanicals, ethically sourced wagyu, and artisanal heritage wines selected by world-renowned sommeliers.
+            </p>
+
+            <div style="display: flex; gap: 1.5rem; margin-top: 1rem; flex-wrap: wrap;">
+              <div class="glass-card" style="padding: 1.25rem; flex: 1; min-width: 200px;">
+                <i class="fa-solid fa-wine-bottle text-gold" style="font-size: 1.8rem; margin-bottom: 0.5rem;"></i>
+                <h4 style="font-family: var(--font-heading); color: var(--text-primary); margin-bottom: 0.25rem;">Curated Cellar</h4>
+                <p style="font-size: 0.85rem; color: var(--text-secondary);">Over 2,400 rare vintage wines from top global estates.</p>
+              </div>
+              <div class="glass-card" style="padding: 1.25rem; flex: 1; min-width: 200px;">
+                <i class="fa-solid fa-fire-burner text-gold" style="font-size: 1.8rem; margin-bottom: 0.5rem;"></i>
+                <h4 style="font-family: var(--font-heading); color: var(--text-primary); margin-bottom: 0.25rem;">Open Kitchen</h4>
+                <p style="font-size: 0.85rem; color: var(--text-secondary);">Watch master chefs choreograph your meal live.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Statistics Counter Grid -->
+        <div class="stats-grid">
+          <div class="glass-card stat-card">
+            <div class="stat-number" data-target="150">0</div>
+            <div class="stat-title">Thousand Guests Served</div>
+          </div>
+          <div class="glass-card stat-card">
+            <div class="stat-number" data-target="18">0</div>
+            <div class="stat-title">Master Chefs & Artisans</div>
+          </div>
+          <div class="glass-card stat-card">
+            <div class="stat-number" data-target="35">0</div>
+            <div class="stat-title">International Awards</div>
+          </div>
+          <div class="glass-card stat-card">
+            <div class="stat-number" data-target="100">0</div>
+            <div class="stat-title">% Organic Sourcing</div>
+          </div>
+        </div>
+
+        <!-- Interactive Milestone Timeline -->
+        <div class="timeline-section">
+          <div class="section-header" style="margin-bottom: 2rem;">
+            <div class="sub-title">JOURNEY TO PERFECTION</div>
+            <h3 class="main-title" style="font-size: 2.2rem;">Milestones of Excellence</h3>
+          </div>
+
+          <div class="timeline-container">
+            <div class="timeline-item">
+              <div class="timeline-dot"></div>
+              <div class="glass-card timeline-content">
+                <div class="timeline-year">2012</div>
+                <div class="timeline-title">Grand Opening in Metropolis</div>
+                <div class="timeline-desc">Chef Antoine Laurent opens the original 40-seat intimate dining room.</div>
+              </div>
+            </div>
+
+            <div class="timeline-item">
+              <div class="timeline-dot"></div>
+              <div class="glass-card timeline-content">
+                <div class="timeline-year">2016</div>
+                <div class="timeline-title">First Michelin Star Awarded</div>
+                <div class="timeline-desc">Recognized globally for innovative molecular gastronomy techniques.</div>
+              </div>
+            </div>
+
+            <div class="timeline-item">
+              <div class="timeline-dot"></div>
+              <div class="glass-card timeline-content">
+                <div class="timeline-year">2020</div>
+                <div class="timeline-title">Luxury Glass Pavilion Expansion</div>
+                <div class="timeline-desc">Added private VIP lounges, botanical roof garden, and wine cellar vault.</div>
+              </div>
+            </div>
+
+            <div class="timeline-item">
+              <div class="timeline-dot"></div>
+              <div class="glass-card timeline-content">
+                <div class="timeline-year">2026</div>
+                <div class="timeline-title">Ranked World's Top 10 Dining Destinations</div>
+                <div class="timeline-desc">Celebrated as a benchmark of modern luxury, sustainability, and hospitality.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         MENU SECTION (SEARCH, FILTERING, 3D CARDS)
+         ========================================================================== -->
+    <section class="section-padding" id="menu" style="background: var(--bg-secondary);">
+      <div class="container">
+        <div class="section-header">
+          <div class="sub-title">CELESTIAL FLAVORS</div>
+          <h2 class="main-title">The Culinary Anthology</h2>
+          <div class="gold-divider">
+            <div class="line"></div><div class="diamond"></div><div class="line"></div>
+          </div>
+          <p class="section-desc">Handcrafted daily using seasonal, ethically-sourced luxury ingredients from around the globe.</p>
+        </div>
+
+        <div class="menu-controls">
+          <!-- Category Filter Tabs -->
+          <div class="filter-tabs" id="filter-tabs">
+            <button class="filter-btn active" data-category="all">All Creations</button>
+            <button class="filter-btn" data-category="starters">Starters</button>
+            <button class="filter-btn" data-category="mains">Main Courses</button>
+            <button class="filter-btn" data-category="specials">Chef Specials</button>
+            <button class="filter-btn" data-category="desserts">Desserts</button>
+            <button class="filter-btn" data-category="cocktails">Cocktails</button>
+          </div>
+
+          <!-- Instant Search Bar & Dietary Filters -->
+          <div class="menu-search-wrapper">
+            <div class="menu-search-input-group">
+              <i class="fa-solid fa-magnifying-glass menu-search-icon"></i>
+              <input type="text" id="menu-search" class="menu-search-input" placeholder="Search menu items (e.g. Wagyu, Lobster, Truffle)..." aria-label="Search Menu">
+            </div>
+
+            <div class="dietary-filters">
+              <label class="dietary-checkbox-label">
+                <input type="checkbox" id="filter-veg">
+                <span><i class="fa-solid fa-leaf text-gold"></i> Vegetarian Only</span>
+              </label>
+              <label class="dietary-checkbox-label">
+                <input type="checkbox" id="filter-popular">
+                <span><i class="fa-solid fa-fire text-gold"></i> Popular Items</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dynamic Food Cards Grid -->
+        <div class="menu-grid" id="menu-grid">
+          <!-- Food items rendered dynamically via JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         CHEF SHOWCASE
+         ========================================================================== -->
+    <section class="section-padding" id="chefs">
+      <div class="container">
+        <div class="section-header">
+          <div class="sub-title">THE CULINARY ARTISTS</div>
+          <h2 class="main-title">Meet Our Master Chefs</h2>
+          <div class="gold-divider">
+            <div class="line"></div><div class="diamond"></div><div class="line"></div>
+          </div>
+          <p class="section-desc">Guided by world-renowned culinary visionaries dedicated to perfection on every plate.</p>
+        </div>
+
+        <div class="chef-grid">
+          <!-- Chef 1 -->
+          <div class="glass-card chef-card">
+            <div class="chef-img-wrapper">
+              <img src="https://images.unsplash.com/photo-1577219491135-ce391730fb2c?auto=format&fit=crop&w=600&q=80" alt="Executive Chef Antoine Laurent" class="chef-img" loading="lazy">
+              <div class="chef-socials">
+                <a href="#" class="social-icon-btn" aria-label="Chef Instagram"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#" class="social-icon-btn" aria-label="Chef LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+                <a href="#" class="social-icon-btn" aria-label="Chef X"><i class="fa-brands fa-x-twitter"></i></a>
+              </div>
+            </div>
+            <h3 class="chef-name">Antoine Laurent</h3>
+            <div class="chef-role">Executive Head Chef</div>
+            <p class="chef-bio">Former Head Chef at 3-Star Le Meurice Paris. 22 years pioneering modern European molecular gastronomy.</p>
+            <div style="margin-top: 1rem;">
+              <span class="badge badge-gold"><i class="fa-solid fa-award"></i> Chef of the Year 2023</span>
+            </div>
+          </div>
+
+          <!-- Chef 2 -->
+          <div class="glass-card chef-card">
+            <div class="chef-img-wrapper">
+              <img src="https://images.unsplash.com/photo-1583394838336-acd977736f90?auto=format&fit=crop&w=600&q=80" alt="Master Pastry Chef Elena Rostova" class="chef-img" loading="lazy">
+              <div class="chef-socials">
+                <a href="#" class="social-icon-btn" aria-label="Chef Instagram"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#" class="social-icon-btn" aria-label="Chef LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+              </div>
+            </div>
+            <h3 class="chef-name">Elena Rostova</h3>
+            <div class="chef-role">Master Pastry Chef</div>
+            <p class="chef-bio">Renowned for sugar sculpture craftsmanship and gold-leaf chocolate spheres. 15 years creating sweet masterpieces.</p>
+            <div style="margin-top: 1rem;">
+              <span class="badge badge-gold"><i class="fa-solid fa-star"></i> World Pastry Champion</span>
+            </div>
+          </div>
+
+          <!-- Chef 3 -->
+          <div class="glass-card chef-card">
+            <div class="chef-img-wrapper">
+              <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=600&q=80" alt="Head Sommelier Marcus Vance" class="chef-img" loading="lazy">
+              <div class="chef-socials">
+                <a href="#" class="social-icon-btn" aria-label="Sommelier Instagram"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#" class="social-icon-btn" aria-label="Sommelier Twitter"><i class="fa-brands fa-x-twitter"></i></a>
+              </div>
+            </div>
+            <h3 class="chef-name">Marcus Vance</h3>
+            <div class="chef-role">Master Sommelier</div>
+            <p class="chef-bio">Grand Sommelier specializing in rare vintage pairings, biodynamic harvests, and artisanal cocktail mixology.</p>
+            <div style="margin-top: 1rem;">
+              <span class="badge badge-gold"><i class="fa-solid fa-wine-glass"></i> Master Sommelier Guild</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         GALLERY & LIGHTBOX
+         ========================================================================== -->
+    <section class="section-padding" id="gallery" style="background: var(--bg-secondary);">
+      <div class="container">
+        <div class="section-header">
+          <div class="sub-title">VISUAL ELEGANCE</div>
+          <h2 class="main-title">The Gallery Experience</h2>
+          <div class="gold-divider">
+            <div class="line"></div><div class="diamond"></div><div class="line"></div>
+          </div>
+          <p class="section-desc">A glimpse into our luxurious ambiance, culinary creations, and private dining spaces.</p>
+        </div>
+
+        <div class="gallery-filter-wrapper">
+          <button class="filter-btn active gallery-filter-btn" data-filter="all">All Views</button>
+          <button class="filter-btn gallery-filter-btn" data-filter="ambience">Ambience</button>
+          <button class="filter-btn gallery-filter-btn" data-filter="dishes">Culinary Art</button>
+          <button class="filter-btn gallery-filter-btn" data-filter="private">Private VIP</button>
+        </div>
+
+        <div class="gallery-grid" id="gallery-grid">
+          <div class="gallery-item wide" data-category="ambience" data-src="https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1200&q=80">
+            <img src="https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80" alt="Main Dining Hall Chandeliers" class="gallery-img" loading="lazy">
+            <div class="gallery-overlay">
+              <div class="gallery-category">Ambience</div>
+              <div class="gallery-title">Celestial Dining Pavilion</div>
+            </div>
+          </div>
+
+          <div class="gallery-item" data-category="dishes" data-src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=1200&q=80">
+            <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80" alt="Seared Wagyu Presentation" class="gallery-img" loading="lazy">
+            <div class="gallery-overlay">
+              <div class="gallery-category">Culinary Art</div>
+              <div class="gallery-title">A5 Wagyu & Black Truffle</div>
+            </div>
+          </div>
+
+          <div class="gallery-item" data-category="dishes" data-src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=1200&q=80">
+            <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=600&q=80" alt="Artisanal Dessert" class="gallery-img" loading="lazy">
+            <div class="gallery-overlay">
+              <div class="gallery-category">Culinary Art</div>
+              <div class="gallery-title">Gold Leaf Sphere</div>
+            </div>
+          </div>
+
+          <div class="gallery-item wide" data-category="private" data-src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1200&q=80">
+            <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=800&q=80" alt="VIP Wine Vault Room" class="gallery-img" loading="lazy">
+            <div class="gallery-overlay">
+              <div class="gallery-category">Private VIP</div>
+              <div class="gallery-title">The Royal Wine Vault Lounge</div>
+            </div>
+          </div>
+
+          <div class="gallery-item" data-category="ambience" data-src="https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=1200&q=80">
+            <img src="https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=600&q=80" alt="Open Bar Mixology" class="gallery-img" loading="lazy">
+            <div class="gallery-overlay">
+              <div class="gallery-category">Ambience</div>
+              <div class="gallery-title">Artisanal Mixology Lounge</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         TESTIMONIALS SLIDER
+         ========================================================================== -->
+    <section class="section-padding" id="testimonials">
+      <div class="container">
+        <div class="section-header">
+          <div class="sub-title">GUEST PRAISE</div>
+          <h2 class="main-title">Words From Our Diners</h2>
+          <div class="gold-divider">
+            <div class="line"></div><div class="diamond"></div><div class="line"></div>
+          </div>
+        </div>
+
+        <div class="testimonial-slider-container">
+          <div class="testimonial-track" id="testimonial-track">
+            <!-- Slide 1 -->
+            <div class="testimonial-slide">
+              <div class="glass-card testimonial-card">
+                <i class="fa-solid fa-quote-left quote-icon"></i>
+                <p class="testimonial-text">
+                  "Taste of Heaven transcends traditional fine dining. The Wagyu with black truffle glaze melted on the palate, and the wine pairings by Marcus were simply sublime. An essential bucket-list culinary experience!"
+                </p>
+                <div class="testimonial-author">
+                  <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" alt="Victoria Sterling" class="author-avatar">
+                  <div class="author-info">
+                    <div class="author-name">Lady Victoria Sterling</div>
+                    <div class="author-role">Food Critic, Michelin Guide Reviewer</div>
+                    <div class="text-gold" style="font-size: 0.85rem; margin-top: 0.2rem;"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Slide 2 -->
+            <div class="testimonial-slide">
+              <div class="glass-card testimonial-card">
+                <i class="fa-solid fa-quote-left quote-icon"></i>
+                <p class="testimonial-text">
+                  "Celebrated our 10th anniversary in the VIP Lounge. The service team executed every detail with white-glove perfection, and Chef Antoine personally greeted our table. Truly heavenly!"
+                </p>
+                <div class="testimonial-author">
+                  <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80" alt="Arthur Pendelton" class="author-avatar">
+                  <div class="author-info">
+                    <div class="author-name">Sir Arthur Pendelton</div>
+                    <div class="author-role">Verified VIP Guest</div>
+                    <div class="text-gold" style="font-size: 0.85rem; margin-top: 0.2rem;"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Slide 3 -->
+            <div class="testimonial-slide">
+              <div class="glass-card testimonial-card">
+                <i class="fa-solid fa-quote-left quote-icon"></i>
+                <p class="testimonial-text">
+                  "The Gold Leaf Chocolate Sphere dessert is a theatrical triumph! Visually stunning, incredibly balanced, and unforgettable. The dark luxury ambiance is pure perfection."
+                </p>
+                <div class="testimonial-author">
+                  <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=150&q=80" alt="Sophia Chen" class="author-avatar">
+                  <div class="author-info">
+                    <div class="author-name">Sophia Chen</div>
+                    <div class="author-role">Culinary Journalist, Gourmet Magazine</div>
+                    <div class="text-gold" style="font-size: 0.85rem; margin-top: 0.2rem;"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slider Pagination Dots -->
+          <div class="slider-dots" id="slider-dots">
+            <span class="dot active" data-slide="0"></span>
+            <span class="dot" data-slide="1"></span>
+            <span class="dot" data-slide="2"></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         RESERVATION SECTION & TABLE FLOORPLAN PICKER
+         ========================================================================== -->
+    <section class="section-padding" id="reservation" style="background: var(--bg-secondary);">
+      <div class="container">
+        <div class="section-header">
+          <div class="sub-title">PRIVATE RESERVATIONS</div>
+          <h2 class="main-title">Reserve Your Celestial Table</h2>
+          <div class="gold-divider">
+            <div class="line"></div><div class="diamond"></div><div class="line"></div>
+          </div>
+          <p class="section-desc">Select your date, preferred seating area, and table layout below.</p>
+        </div>
+
+        <div class="reservation-wrapper">
+          <!-- Reservation Form Card -->
+          <div class="glass-card reservation-form-card">
+            <form id="reservation-form">
+              <div class="form-grid">
+                <div class="form-group">
+                  <label class="form-label" for="res-name">Full Name *</label>
+                  <input type="text" id="res-name" class="form-control" placeholder="Lord / Lady / Mr. / Ms." required>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="res-email">Email Address *</label>
+                  <input type="email" id="res-email" class="form-control" placeholder="guest@domain.com" required>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="res-phone">Phone Number *</label>
+                  <input type="tel" id="res-phone" class="form-control" placeholder="+1 (555) 000-0000" required>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="res-guests">Number of Guests *</label>
+                  <select id="res-guests" class="form-control" required>
+                    <option value="1">1 Guest (Intimate Dining)</option>
+                    <option value="2" selected>2 Guests (Romantic Table)</option>
+                    <option value="4">4 Guests (Standard Party)</option>
+                    <option value="6">6 Guests (VIP Group)</option>
+                    <option value="8">8+ Guests (Private Salon Event)</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="res-date">Reservation Date *</label>
+                  <input type="date" id="res-date" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="res-time">Preferred Time Slot *</label>
+                  <select id="res-time" class="form-control" required>
+                    <option value="17:30">17:30 PM (Early Dinner)</option>
+                    <option value="19:00" selected>19:00 PM (Prime Dinner)</option>
+                    <option value="20:30">20:30 PM (Late Symphony)</option>
+                    <option value="22:00">22:00 PM (Midnight Tasting)</option>
+                  </select>
+                </div>
+
+                <div class="form-group full-width">
+                  <label class="form-label" for="res-notes">Dietary Restrictions or Special Requests</label>
+                  <textarea id="res-notes" class="form-control" placeholder="Allergies, anniversary celebrations, champagne requests..."></textarea>
+                </div>
+              </div>
+
+              <!-- Hidden input for table choice -->
+              <input type="hidden" id="selected-table-id" value="window-view">
+
+              <button type="submit" class="btn btn-gold" style="width: 100%; margin-top: 1rem;">
+                <i class="fa-solid fa-paper-plane"></i> Confirm Reservation Request
+              </button>
+            </form>
+          </div>
+
+          <!-- Interactive Table Floorplan Selector -->
+          <div class="glass-card floorplan-card">
+            <div>
+              <div class="floorplan-title">
+                <i class="fa-solid fa-compass text-gold"></i> Select Seating Atmosphere
+              </div>
+              <p style="font-size: 0.85rem; color: var(--text-secondary);">Click to choose your preferred location inside Taste of Heaven:</p>
+
+              <div class="floorplan-grid">
+                <div class="table-option-btn selected" data-table="window-view">
+                  <i class="fa-solid fa-city table-icon"></i>
+                  <div class="table-name">Metropolis Skyline View</div>
+                  <div class="table-capacity">Window Booths • 2-4 Seats</div>
+                </div>
+
+                <div class="table-option-btn" data-table="vip-lounge">
+                  <i class="fa-solid fa-gem table-icon"></i>
+                  <div class="table-name">Royal VIP Lounge</div>
+                  <div class="table-capacity">Private Velvet Salon • 4-8 Seats</div>
+                </div>
+
+                <div class="table-option-btn" data-table="main-hall">
+                  <i class="fa-solid fa-synagogue table-icon"></i>
+                  <div class="table-name">Main Grand Hall</div>
+                  <div class="table-capacity">Under Chandeliers • 2-6 Seats</div>
+                </div>
+
+                <div class="table-option-btn" data-table="garden-terrace">
+                  <i class="fa-solid fa-cloud-moon table-icon"></i>
+                  <div class="table-name">Roof Botanical Terrace</div>
+                  <div class="table-capacity">Outdoor Firepit • 2-4 Seats</div>
+                </div>
+              </div>
+            </div>
+
+            <div style="background: rgba(212, 175, 55, 0.08); border: 1px solid var(--border-gold); padding: 1rem; border-radius: var(--radius-sm); font-size: 0.8rem; color: var(--text-secondary);">
+              <i class="fa-solid fa-shield-halved text-gold"></i> <strong>Reservation Guarantee:</strong> Free cancellation up to 24 hours prior. Dress Code: Smart Elegant.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         FAQ ACCORDION
+         ========================================================================== -->
+    <section class="section-padding" id="faq">
+      <div class="container">
+        <div class="section-header">
+          <div class="sub-title">INFORMATION & POLICIES</div>
+          <h2 class="main-title">Frequently Asked Questions</h2>
+          <div class="gold-divider">
+            <div class="line"></div><div class="diamond"></div><div class="line"></div>
+          </div>
+        </div>
+
+        <div class="faq-container">
+          <div class="glass-card faq-item active">
+            <div class="faq-header">
+              <span class="faq-question">What is the restaurant dress code?</span>
+              <i class="fa-solid fa-chevron-down faq-icon"></i>
+            </div>
+            <div class="faq-content">
+              <p class="faq-answer">We enforce a <strong>Smart Elegant</strong> dress code. Jackets are encouraged for gentlemen; athletic wear, beachwear, and flip-flops are strictly prohibited to maintain an atmosphere of refined luxury.</p>
+            </div>
+          </div>
+
+          <div class="glass-card faq-item">
+            <div class="faq-header">
+              <span class="faq-question">Can you accommodate severe dietary allergies or vegan preferences?</span>
+              <i class="fa-solid fa-chevron-down faq-icon"></i>
+            </div>
+            <div class="faq-content">
+              <p class="faq-answer">Absolutely. Chef Antoine and our team craft specialized 7-course Vegan and Gluten-Free tasting menus. Please notify us of severe allergies at least 24 hours prior to your reservation.</p>
+            </div>
+          </div>
+
+          <div class="glass-card faq-item">
+            <div class="faq-header">
+              <span class="faq-question">Is valet parking available on-site?</span>
+              <i class="fa-solid fa-chevron-down faq-icon"></i>
+            </div>
+            <div class="faq-content">
+              <p class="faq-answer">Complimentary luxury white-glove valet parking is provided at the main porte-cochère entrance on Celestial Avenue.</p>
+            </div>
+          </div>
+
+          <div class="glass-card faq-item">
+            <div class="faq-header">
+              <span class="faq-question">How far in advance should I book for weekend dining?</span>
+              <i class="fa-solid fa-chevron-down faq-icon"></i>
+            </div>
+            <div class="faq-content">
+              <p class="faq-answer">We recommend booking 2 to 4 weeks in advance for Friday and Saturday evening seatings. Private VIP Salon bookings open 60 days in advance.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         CONTACT & LOCATION SECTION
+         ========================================================================== -->
+    <section class="section-padding" id="contact" style="background: var(--bg-secondary);">
+      <div class="container">
+        <div class="section-header">
+          <div class="sub-title">CONNECT WITH US</div>
+          <h2 class="main-title">Location & Enquiries</h2>
+          <div class="gold-divider">
+            <div class="line"></div><div class="diamond"></div><div class="line"></div>
+          </div>
+        </div>
+
+        <div class="contact-grid">
+          <div class="contact-info-list">
+            <div class="glass-card contact-info-item" style="padding: 1.5rem;">
+              <div class="contact-icon"><i class="fa-solid fa-location-dot"></i></div>
+              <div>
+                <div class="contact-detail-title">Address</div>
+                <div class="contact-detail-text">777 Grand Celestial Avenue, Suite 100, Metropolis, NY 10001</div>
+              </div>
+            </div>
+
+            <div class="glass-card contact-info-item" style="padding: 1.5rem;">
+              <div class="contact-icon"><i class="fa-solid fa-phone"></i></div>
+              <div>
+                <div class="contact-detail-title">Reservations & Concierge</div>
+                <div class="contact-detail-text">+1 (555) 888-9999 • concierge@tasteofheaven.com</div>
+              </div>
+            </div>
+
+            <div class="glass-card contact-info-item" style="padding: 1.5rem;">
+              <div class="contact-icon"><i class="fa-solid fa-clock"></i></div>
+              <div>
+                <div class="contact-detail-title">Operating Hours</div>
+                <div class="contact-detail-text">
+                  Tue – Sun: 17:00 PM – 23:30 PM<br>
+                  Monday: Closed for Culinary Research
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Interactive Vector Styled Map Embed Container -->
+          <div class="map-container">
+            <iframe title="Taste of Heaven Location Map" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3022.215707164102!2d-73.98657968459377!3d40.74844097932847!2m3!1f0!1f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c259a9b3117469%3A0xd134e199a405a163!2sEmpire%20State%20Building!5e0!3m2!1sen!2sus!4v1689000000000!5m2!1sen!2sus" width="100%" height="100%" style="border:0; filter: grayscale(0.8) invert(0.9) contrast(1.2);" allowfullscreen="" loading="lazy"></iframe>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ==========================================================================
+       ONLINE ORDERING CART DRAWER
+       ========================================================================== -->
+  <div class="cart-drawer-overlay" id="cart-overlay"></div>
+  <div class="cart-drawer" id="cart-drawer">
+    <div class="cart-header">
+      <div class="cart-title"><i class="fa-solid fa-bag-shopping text-gold"></i> Your Order Cart</div>
+      <button class="cart-close-btn" id="btn-cart-close" aria-label="Close Cart"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+
+    <div class="cart-items-container" id="cart-items">
+      <!-- Cart items rendered via JS -->
+    </div>
+
+    <div class="cart-footer">
+      <div class="cart-summary-row">
+        <span>Subtotal</span>
+        <span id="cart-subtotal">$0.00</span>
+      </div>
+      <div class="cart-summary-row">
+        <span>Tax & Sommelier Service (10%)</span>
+        <span id="cart-tax">$0.00</span>
+      </div>
+      <div class="cart-summary-row total">
+        <span>Total</span>
+        <span id="cart-total">$0.00</span>
+      </div>
+
+      <button class="btn btn-gold" id="btn-checkout" style="width: 100%; margin-top: 1rem;">
+        <i class="fa-solid fa-credit-card"></i> Proceed to Checkout
+      </button>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       LIGHTBOX MODAL
+       ========================================================================== -->
+  <div class="lightbox-modal" id="lightbox-modal">
+    <div class="lightbox-content-box">
+      <button class="lightbox-close" id="lightbox-close"><i class="fa-solid fa-xmark"></i></button>
+      <button class="lightbox-prev" id="lightbox-prev"><i class="fa-solid fa-chevron-left"></i></button>
+      <button class="lightbox-next" id="lightbox-next"><i class="fa-solid fa-chevron-right"></i></button>
+      <img src="" alt="Enlarged View" class="lightbox-img" id="lightbox-img">
+      <div class="lightbox-caption" id="lightbox-caption"></div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       RESERVATION SUCCESS MODAL
+       ========================================================================== -->
+  <div class="lightbox-modal" id="res-success-modal">
+    <div class="glass-card" style="max-width: 500px; padding: 2.5rem; text-align: center;">
+      <i class="fa-solid fa-circle-check text-gold" style="font-size: 3.5rem; margin-bottom: 1rem;"></i>
+      <h3 style="font-family: var(--font-heading); font-size: 1.6rem; margin-bottom: 0.5rem;">Reservation Confirmed!</h3>
+      <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1.5rem;">
+        Thank you for reserving with Taste of Heaven. A confirmation receipt has been sent to your email.
+      </p>
+
+      <div style="background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border-gold); padding: 1.25rem; border-radius: var(--radius-sm); margin-bottom: 1.5rem; text-align: left; font-size: 0.85rem;">
+        <div><strong>Booking Reference:</strong> <span id="conf-ref" class="text-gold">#TH-98421</span></div>
+        <div><strong>Guest Name:</strong> <span id="conf-name">Lord Vance</span></div>
+        <div><strong>Party Size:</strong> <span id="conf-guests">2 Guests</span></div>
+        <div><strong>Date & Time:</strong> <span id="conf-datetime">July 25, 2026 at 19:00 PM</span></div>
+        <div><strong>Atmosphere:</strong> <span id="conf-table">Metropolis Skyline View</span></div>
+      </div>
+
+      <button class="btn btn-gold" id="btn-close-res-modal" style="width: 100%;">
+        Close & Return to Experience
+      </button>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       FOOTER
+       ========================================================================== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="#home" class="nav-logo">
+            <div class="nav-logo-icon"><i class="fa-solid fa-utensils"></i></div>
+            <div class="nav-logo-text">TASTE OF <span>HEAVEN</span></div>
+          </a>
+          <p class="footer-desc">
+            A three-Michelin-starred fine dining sanctuary defining contemporary gastronomy, luxury glassmorphism ambiance, and timeless hospitality.
+          </p>
+          <div style="display: flex; gap: 0.75rem;">
+            <a href="#" class="social-icon-btn" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+            <a href="#" class="social-icon-btn" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+            <a href="#" class="social-icon-btn" aria-label="TripAdvisor"><i class="fa-solid fa-utensils"></i></a>
+          </div>
+        </div>
+
+        <div>
+          <div class="footer-title">Navigation</div>
+          <ul class="footer-links">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#about">About Our Story</a></li>
+            <li><a href="#menu">Gourmet Menu</a></li>
+            <li><a href="#chefs">Executive Chefs</a></li>
+            <li><a href="#gallery">Gallery</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <div class="footer-title">Services</div>
+          <ul class="footer-links">
+            <li><a href="#reservation">Table Booking</a></li>
+            <li><a href="#reservation">Private VIP Salons</a></li>
+            <li><a href="#menu">Online Ordering</a></li>
+            <li><a href="#faq">Guest Policies & Dress Code</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <div class="footer-title">Newsletter</div>
+          <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem;">
+            Subscribe to receive exclusive seasonal menu previews and private chef event invitations.
+          </p>
+          <form class="newsletter-form" id="newsletter-form">
+            <input type="email" class="newsletter-input" placeholder="Your email address..." required aria-label="Newsletter email">
+            <button type="submit" class="btn btn-gold" style="padding: 0.75rem 1.25rem;"><i class="fa-solid fa-arrow-right"></i></button>
+          </form>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>&copy; 2026 Taste of Heaven. All Rights Reserved. Crafted for Michelin Connoisseurs.</div>
+        <div>
+          <a href="#" style="color: var(--text-muted); text-decoration: none; margin-right: 1rem;">Privacy Policy</a>
+          <a href="#" style="color: var(--text-muted); text-decoration: none;">Terms of Service</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Floating Back-to-Top Progress Button -->
+  <button class="back-to-top-btn" id="back-to-top" aria-label="Back to Top">
+    <svg class="progress-ring" viewBox="0 0 50 50">
+      <circle class="progress-ring-circle" id="progress-circle" r="23" cx="25" cy="25" fill="transparent" stroke-width="2.5"/>
+    </svg>
+    <i class="fa-solid fa-arrow-up"></i>
+  </button>
+
+  <!-- Backend API Integration & Supabase Verification Scripts -->
+  <script src="js/api.js"></script>
+  <script src="js/supabase_verify.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
