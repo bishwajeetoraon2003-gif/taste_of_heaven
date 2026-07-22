@@ -433,7 +433,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let activeCategory = 'all';
   let currentLoadedMenu = MENU_DATA;
 
-  async function renderMenu() {
+  function renderMenu() {
     if (!menuGrid) return;
     const searchVal = searchInput ? searchInput.value.toLowerCase().trim() : '';
     const isVegOnly = filterVeg ? filterVeg.checked : false;
@@ -442,23 +442,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Load custom menu if modified by Admin CMS
     const customMenu = JSON.parse(localStorage.getItem('taste_custom_menu'));
     let dataSource = (Array.isArray(customMenu) && customMenu.length > 0) ? customMenu : MENU_DATA;
-
-    if ((!customMenu || customMenu.length === 0) && window.TasteAPI) {
-      const apiMenu = await window.TasteAPI.getMenu(activeCategory, searchVal);
-      if (apiMenu && apiMenu.length > 0) {
-        dataSource = apiMenu.map(m => ({
-          id: m.id,
-          title: m.title,
-          category: m.category,
-          price: parseFloat(m.price || 0),
-          rating: parseFloat(m.rating || 4.9),
-          veg: Boolean(m.veg),
-          popular: Boolean(m.popular),
-          image: m.image_url || m.image || "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=600&q=80",
-          description: m.description
-        }));
-      }
-    }
 
     currentLoadedMenu = dataSource;
 
@@ -509,7 +492,8 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
         </div>
       </div>
-    `).join('');
+      `;
+    }).join('');
 
     // Re-attach 3D Tilt handlers & Add to cart handlers
     attachCardEvents();
